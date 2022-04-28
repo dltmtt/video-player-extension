@@ -1,2 +1,33 @@
-# video-player
-Player for local videos with keyboard shortcuts.
+# Player for local videos
+This a video player for local videos whose main features are:
+* Light/dark theme (following system preferences)
+* Restores video location[^note]
+* Keyboard shortcuts
+* Works offline
+
+## Usage
+To use the extension, click on its tooltip icon or press `Ctrl+Shift+O`[^1].
+
+To open a video, drag and drop it on the extension page. If another video is opened, the player will switch to that.
+
+To toggle between time elapsed and time remaining, click on the video duration.
+
+## Keyboard shortcuts
+The following keyboard shortcuts are supported:
+| Key | Action |
+|:---:|---|
+| `Space` | Toggle play/pause |
+| `S` | Slow down by 0.1× |
+| `D` | Speed up by 0.1× |
+| `Z`<br>`Left arrow`<br>`Down arrow` | Rewind 15 seconds |
+| `X`<br>`Right arrow`<br>`Up arrow` | Forward 15 seconds |
+| `R` | Reset default speed |
+| `A` | Set speed to 2× |
+| `M` | Toggle mute |
+| `C` | Toggle video zoom |
+| `P` | Toggle PiP |
+| `F`<br>`Enter` | Toggle Fullscreen |
+
+[^note]: The mechanism is based on the file name, so the video location won't be restored if the video is renamed. The time is stored in `localStorage` and gets automatically deleted when a video ends.
+
+[^1]: `Cmd+Shift+O` on macOS. Customizable under `chrome://extensions/shortcuts`

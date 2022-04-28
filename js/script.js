@@ -202,9 +202,6 @@ document.addEventListener('keydown', (event) => {
             togglePictureInPicture()
             break
         case 'f':
-            if (document.activeElement.tagName !== 'INPUT')
-                toggleFullScreen()
-            break
         case 'Enter':
             if (document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT')
                 toggleFullScreen()

@@ -1,0 +1,209 @@
+@use "colors";
+@use "fonts";
+
+:root {
+    --hue: 225deg;
+    --saturation: 0%;
+    --lightness: 96%;
+
+    --spacing: .75rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+button,
+input {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: inherit;
+
+    border: 0;
+}
+
+button {
+    cursor: pointer;
+}
+
+html,
+body,
+#drag-panel,
+.player {
+    height: 100%;
+}
+
+body {
+    font: .8375rem 'JetBrains Mono', monospace;
+}
+
+#drag-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    font-size: 2.25rem;
+    color: var(--text2);
+    background-image: radial-gradient(circle at 100% 0, var(--surface1), var(--surface1) 50%, var(--surface3) 75%, var(--surface1) 75%);
+
+    transition: .5s;
+
+    &[data-file-hover] {
+        box-shadow: inset 0 0 .75em .25em;
+    }
+}
+
+#drop-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+
+    // This can be seen when a file is hovering over a video
+    background-image: radial-gradient(var(--surface4), var(--surface3));
+
+    video {
+        flex: 1;
+        min-height: 0;
+
+        background-color: var(--surface2);
+
+        transition: .5s;
+    }
+
+    &[data-file-hover] video {
+        transform: scale(.75);
+        border-radius: 1rem;
+        border: medium solid var(--surface4);
+    }
+}
+
+%hover-transition {
+    transition: .5s;
+
+    &:is(:hover, :focus-visible) {
+        color: var(--text1);
+        background-color: var(--surface3);
+    }
+}
+
+.controls {
+    position: relative;
+
+    display: flex;
+    gap: var(--spacing);
+    padding: var(--spacing);
+
+    color: var(--text2);
+    background-color: var(--surface2);
+}
+
+#video-bar {
+    position: absolute;
+    inset: 0;
+    transform: translateY(-50%);
+
+    height: .375rem;
+    transition: .25s;
+
+    &:hover {
+        height: .5rem;
+    }
+}
+
+#time-indicator {
+    white-space: nowrap;
+}
+
+.duration::before {
+    content: ' / ';
+}
+
+#file-name {
+    margin: auto 0;
+
+    max-width: 30ch;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &::before {
+        content: '•';
+        margin-right: var(--spacing);
+    }
+}
+
+[class$="-btn"] {
+    @extend %hover-transition;
+    padding: calc(var(--spacing) * 2/3);
+    border-radius: 50%;
+
+    &:is(:hover, :focus-visible) {
+        box-shadow: 0 0 1px;
+    }
+}
+
+.speed-controls {
+    // Push to the right
+    margin-left: auto;
+
+    display: inline-grid;
+    grid:
+        "speed-display speed-increase"
+        "speed-display speed-decrease"
+        / 4em 1.5em;
+
+    // External and internal non-overlapping borders
+    $border-width: 1px;
+    border-radius: .5rem;
+    border: $border-width solid var(--surface4);
+    background-color: var(--surface4);
+    gap: $border-width;
+
+    & > * {
+        // Same color as .controls (use revert-layer when available)
+        background-color: var(--surface2);
+    }
+}
+
+#speed-display {
+    grid-area: speed-display;
+
+    text-align: center;
+    cursor: text;
+
+    border-bottom-left-radius: inherit;
+    border-top-left-radius: inherit;
+    box-shadow: inset 0 0 .25em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
+
+    &::-webkit-inner-spin-button {
+        display: none;
+    }
+}
+
+.speed-increase,
+.speed-decrease {
+    @extend %hover-transition;
+    font-size: 1rem;
+}
+
+.speed-increase {
+    grid-area: speed-increase;
+    border-top-right-radius: inherit;
+}
+
+.speed-decrease {
+    grid-area: speed-decrease;
+    border-bottom-right-radius: inherit;
+}

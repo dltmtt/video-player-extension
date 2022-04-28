@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'JetBrains Mono';
+    font-weight: 1 1000;
+    src: local('JetBrains Mono'),
+        url('../fonts/JetBrainsMono.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Material Symbols Rounded';
+    font-weight: 1 1000;
+    src: local('Material Symbols Rounded'),
+        url('../fonts/MaterialSymbolsRounded.ttf') format('truetype');
+}
+
+.material-icons {
+    font: 1.5rem / 1 'Material Symbols Rounded';
+    display: inline-block;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}

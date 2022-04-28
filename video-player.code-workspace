@@ -1,0 +1,31 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+        "files.insertFinalNewline": true,
+        "files.trimFinalNewlines": true,
+        "files.trimTrailingWhitespace": true,
+        "html.format.indentInnerHtml": false,
+        "javascript.format.semicolons": "remove",
+        "liveSassCompile.settings.formats": [
+            {
+                "format": "expanded",
+                "extensionName": ".css",
+                "savePath": "/css",
+                "indentWidth": 4
+            },
+            {
+                "format": "compressed",
+                "extensionName": ".min.css",
+                "savePath": "/css"
+            }
+        ],
+        "liveSassCompile.settings.showOutputWindowOn": "Warning",
+        "scss.format.spaceAroundSelectorSeparator": true
+    }
+}

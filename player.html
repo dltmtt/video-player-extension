@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width = device-width, initial-scale = 1.0">
+<meta name="description" content="Player for local videos with keyboard shortcuts.">
+<meta name="color-scheme" content="light dark">
+
+<title>Player for local videos</title>
+
+<link rel="icon" href="icons/icon96.png">
+<link rel="stylesheet" href="css/style.min.css">
+
+<div class="droppable" id="drag-panel">Drag the video here</div>
+<div id="drop-overlay" hidden></div>
+
+<div class="player droppable" hidden>
+    <video id="main-video"></video>
+
+    <div class="controls" aria-controls="main-video">
+        <input type="range" aria-label="Video progess bar" value="0" step="any" tabindex="-1" id="video-bar">
+
+        <button type="button" aria-label="Toggle play/pause" class="material-icons play-btn">play_arrow</button>
+        <button type="button" aria-label="Toggle time elapsed/time remaining" id="time-indicator">
+            <time role="timer" class="current-time">00:00</time>
+            <time role="timer" class="time-remaining" hidden></time>
+            <time role="timer" class="duration"></time>
+        </button>
+
+        <div aria-label="Video name" id="file-name"></div>
+
+        <div class="speed-controls">
+            <input type="number" aria-label="Speed controls" value="1.00" min="0.10" max="16" step="any"
+                id="speed-display">
+            <button type="button" aria-label="Speed up" aria-controls="speed-display"
+                class="material-icons speed-increase">keyboard_arrow_up</button>
+            <button type="button" aria-label="Slow down" aria-controls="speed-display"
+                class="material-icons speed-decrease">keyboard_arrow_down</button>
+        </div>
+        <button type="button" aria-label="Toggle zoom" class="material-icons zoom-btn">zoom_out_map</button>
+        <button type="button" aria-label="Toggle fullscreen" class="material-icons fullscreen-btn">fullscreen</button>
+    </div>
+</div>
+
+<script src="js/script.js" defer></script>

@@ -76,6 +76,8 @@ document.onfullscreenchange = function () {
         fullscreenBtn.innerText = 'fullscreen'
 }
 
+video.addEventListener('dblclick', toggleFullScreen)
+
 // Speed
 video.onratechange = function () {
     speedDisplay.value = this.playbackRate.toFixed(2)

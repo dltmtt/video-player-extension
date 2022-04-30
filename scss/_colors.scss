@@ -28,11 +28,6 @@
     --shadow-strength-dark: 80%;
 }
 
-::selection {
-    color: var(--text1);
-    background: var(--surface3);
-}
-
 @media (prefers-color-scheme: light) {
     :root {
         --main-color: var(--light);

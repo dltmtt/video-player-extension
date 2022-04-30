@@ -28,7 +28,8 @@ input {
     border: 0;
 }
 
-button {
+button,
+input[type="range"] {
     cursor: pointer;
 }
 

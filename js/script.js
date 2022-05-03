@@ -4,6 +4,7 @@
 const dragPanel = document.querySelector('#drag-panel')
 const dropOverlay = document.querySelector('#drop-overlay')
 const droppableElements = document.querySelectorAll('.droppable')
+const fileName = document.querySelector('#file-name')
 const video = document.querySelector('video')
 var videoObjURL
 var videoId
@@ -43,8 +44,7 @@ dropOverlay.addEventListener('drop', function (e) {
     videoObjURL = URL.createObjectURL(file)
     video.src = videoObjURL
 
-    // The title is the file name without the extension
-    video.title = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
+    fileName.innerText = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
     videoId = `Timer for ${file.name}`
 
     dropOverlay.hidden = true
@@ -123,8 +123,6 @@ video.addEventListener('loadedmetadata', function () {
     timeRemaining.innerHTML = `-${secondsToTime(this.duration - this.currentTime)}`
     duration.innerHTML = secondsToTime(this.duration)
     videoBar.setAttribute('max', this.duration)
-
-    document.querySelector('#file-name').innerText = this.title
 })
 
 video.addEventListener('timeupdate', function () {

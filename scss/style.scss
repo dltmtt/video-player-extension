@@ -149,6 +149,8 @@ body {
     padding: calc(var(--spacing) * 2/3);
     border-radius: 50%;
 
+    user-select: none;
+
     &:is(:hover, :focus-visible) {
         box-shadow: 0 0 1px;
     }

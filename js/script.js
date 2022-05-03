@@ -1,5 +1,8 @@
 'use strict'
 
+// Put this, along with HTML elements, in an init function
+var modifierPressed = false
+
 // DRAG 'N' DROP
 const dragPanel = document.querySelector('#drag-panel')
 const dropOverlay = document.querySelector('#drop-overlay')
@@ -83,22 +86,22 @@ video.onratechange = function () {
     speedDisplay.value = this.playbackRate.toFixed(2)
 }
 
-speedIncrease.onclick = () => addToSpeed(0.1)
-speedDecrease.onclick = () => addToSpeed(-0.1)
+speedIncrease.onclick = speedUp
+speedDecrease.onclick = slowDown
 
 speedDisplay.oninput = function () {
     video.playbackRate = clamp(0.1, this.value, 16)
 }
 
-speedDisplay.addEventListener('keydown', function (e) {
-    switch (e.key) {
+speedDisplay.addEventListener('keydown', function (event) {
+    switch (event.key) {
         case 'ArrowUp':
-            e.preventDefault()
-            addToSpeed(0.1)
+            event.preventDefault()
+            speedUp()
             break
         case 'ArrowDown':
-            e.preventDefault()
-            addToSpeed(-0.1)
+            event.preventDefault()
+            slowDown()
     }
 })
 
@@ -154,8 +157,8 @@ videoBar.addEventListener('input', function () {
 // videoBar also has tabindex="-1"
 videoBar.onfocus = function () { this.blur() }
 
-replayBtn.onclick = () => { video.currentTime -= 10 }
-forwardBtn.onclick = () => { video.currentTime += 10 }
+replayBtn.onclick = replay
+forwardBtn.onclick = forward
 
 // Toggle current time/remaining time
 timeIndicator.addEventListener('click', function () {
@@ -168,28 +171,40 @@ video.onended = () => { localStorage.removeItem(videoId) }
 
 // KEYBOARD SHORTCUTS
 document.addEventListener('keydown', (event) => {
+    if (event.shiftKey) {
+        modifierPressed = true
+        replayBtn.textContent = 'replay_30'
+        forwardBtn.textContent = 'forward_30'
+        speedIncrease.textContent = 'keyboard_double_arrow_up'
+        speedDecrease.textContent = 'keyboard_double_arrow_down'
+    }
+
     switch (event.key) {
         case ' ': // Toggle play
             if (document.activeElement.tagName !== 'BUTTON')
                 togglePlay()
             break
         case 's': // Slow down
-            addToSpeed(-0.1)
+        case 'S':
+            slowDown()
             break
         case 'd': // Speed up
-            addToSpeed(0.1)
+        case 'D':
+            speedUp()
             break
         case 'z': // Rewind
+        case 'Z':
         case 'ArrowLeft':
         case 'ArrowDown':
             if (document.activeElement.tagName !== 'INPUT')
-                video.currentTime -= 10
+                replay()
             break
         case 'x': // Advance
+        case 'X':
         case 'ArrowRight':
         case 'ArrowUp':
             if (document.activeElement.tagName !== 'INPUT')
-                video.currentTime += 10
+                forward()
             break
         case 'r': // Reset speed
             video.playbackRate = video.defaultPlaybackRate
@@ -213,12 +228,19 @@ document.addEventListener('keydown', (event) => {
     }
 })
 
+document.addEventListener('keyup', (event) => {
+    if (event.shiftKey)
+        return
+
+    modifierPressed = false
+    replayBtn.textContent = 'replay_10'
+    forwardBtn.textContent = 'forward_10'
+    speedIncrease.textContent = 'keyboard_arrow_up'
+    speedDecrease.textContent = 'keyboard_arrow_down'
+})
+
 
 // AUXILIARY FUNCTIONS
-function clamp(min, value, max) {
-    return Math.min(Math.max(value, min), max)
-}
-
 function togglePlay() {
     video.paused ? video.play() : video.pause()
 }
@@ -227,9 +249,29 @@ function toggleMute() {
     video.muted = !video.muted
 }
 
+function clamp(min, value, max) {
+    return Math.min(Math.max(value, min), max)
+}
+
 function addToSpeed(delta) {
     // Clamp speed between 0.1 and 16 (Chrome range is [0.0625, 16])
     video.playbackRate = clamp(0.1, (video.playbackRate + delta).toFixed(2), 16)
+}
+
+function speedUp() {
+    addToSpeed(modifierPressed ? 1 : 0.1)
+}
+
+function slowDown() {
+    addToSpeed(modifierPressed ? -1 : -0.1)
+}
+
+function replay() {
+    video.currentTime -= modifierPressed ? 30 : 10
+}
+
+function forward() {
+    video.currentTime += modifierPressed ? 30 : 10
 }
 
 function togglePictureInPicture() {

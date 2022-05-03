@@ -20,7 +20,12 @@
     <div class="controls" aria-controls="main-video">
         <input type="range" aria-label="Video progess bar" value="0" step="any" tabindex="-1" id="video-bar">
 
-        <button type="button" aria-label="Toggle play/pause" class="material-icons play-btn">play_arrow</button>
+        <div class="basic-controls">
+            <button type="button" aria-label="Toggle play/pause" class="material-icons play-btn">play_arrow</button>
+            <button type="button" aria-label="Replay 10 s" class="material-icons replay-btn">replay_10</button>
+            <button type="button" aria-label="Forward 10 s" class="material-icons forward-btn">forward_10</button>
+        </div>
+
         <button type="button" aria-label="Toggle time elapsed/time remaining" id="time-indicator">
             <time role="timer" class="current-time">00:00</time>
             <time role="timer" class="time-remaining" hidden></time>

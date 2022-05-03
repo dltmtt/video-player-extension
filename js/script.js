@@ -111,6 +111,8 @@ const videoBar = document.querySelector('#video-bar')
 const timeIndicator = document.querySelector('#time-indicator')
 const currentTime = document.querySelector('.current-time')
 const timeRemaining = document.querySelector('.time-remaining')
+const replayBtn = document.querySelector('.replay-btn')
+const forwardBtn = document.querySelector('.forward-btn')
 const duration = document.querySelector('.duration')
 var skipTimeUpdate
 
@@ -152,6 +154,9 @@ videoBar.addEventListener('input', function () {
 // videoBar also has tabindex="-1"
 videoBar.onfocus = function () { this.blur() }
 
+replayBtn.onclick = () => { video.currentTime -= 10 }
+forwardBtn.onclick = () => { video.currentTime += 10 }
+
 // Toggle current time/remaining time
 timeIndicator.addEventListener('click', function () {
     [timeRemaining.hidden, currentTime.hidden] = [currentTime.hidden, timeRemaining.hidden]
@@ -178,13 +183,13 @@ document.addEventListener('keydown', (event) => {
         case 'ArrowLeft':
         case 'ArrowDown':
             if (document.activeElement.tagName !== 'INPUT')
-                video.currentTime -= 15
+                video.currentTime -= 10
             break
         case 'x': // Advance
         case 'ArrowRight':
         case 'ArrowUp':
             if (document.activeElement.tagName !== 'INPUT')
-                video.currentTime += 15
+                video.currentTime += 10
             break
         case 'r': // Reset speed
             video.playbackRate = video.defaultPlaybackRate

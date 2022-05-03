@@ -149,6 +149,13 @@ body {
     background-color: var(--surface2);
 }
 
+.basic-controls {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
 #video-bar {
     position: absolute;
     inset: 0;

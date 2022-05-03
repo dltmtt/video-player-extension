@@ -199,37 +199,42 @@ body {
     margin-left: auto;
     display: inline-grid;
     grid: "speed-display speed-increase" "speed-display speed-decrease"/4em 1.5em;
+    --border: thin solid var(--surface4);
     border-radius: 0.5rem;
-    border: thin solid var(--surface4);
+    border: var(--border);
 }
-.speed-controls #speed-display {
+
+#speed-display {
     grid-area: speed-display;
-    border-right: thin solid var(--surface4);
+    border-right: var(--border);
     text-align: center;
     cursor: text;
     border-bottom-left-radius: inherit;
     border-top-left-radius: inherit;
     box-shadow: inset 0 0 0.25em hsl(var(--surface-shadow)/calc(var(--shadow-strength) + 15%));
 }
-.speed-controls #speed-display::-webkit-inner-spin-button {
+#speed-display::-webkit-inner-spin-button {
     display: none;
 }
-.speed-controls .speed-increase,
-.speed-controls .speed-decrease {
+
+.speed-increase,
+.speed-decrease {
     font-size: 1rem;
     transition: 0.5s;
 }
-.speed-controls .speed-increase:is(:hover, :focus-visible),
-.speed-controls .speed-decrease:is(:hover, :focus-visible) {
+.speed-increase:is(:hover, :focus-visible),
+.speed-decrease:is(:hover, :focus-visible) {
     color: var(--text1);
     background-color: var(--surface3);
 }
-.speed-controls .speed-increase {
+
+.speed-increase {
     grid-area: speed-increase;
     border-top-right-radius: inherit;
-    border-bottom: thin solid var(--surface4);
+    border-bottom: var(--border);
 }
-.speed-controls .speed-decrease {
+
+.speed-decrease {
     grid-area: speed-decrease;
     border-bottom-right-radius: inherit;
 }/*# sourceMappingURL=style.css.map */

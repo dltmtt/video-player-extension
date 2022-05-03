@@ -140,12 +140,12 @@ body {
     border: medium solid var(--surface4);
 }
 
-.speed-increase,
-.speed-decrease, [class$=-btn] {
+.speed-controls .speed-increase,
+.speed-controls .speed-decrease, [class$=-btn] {
     transition: 0.5s;
 }
-.speed-increase:is(:hover, :focus-visible),
-.speed-decrease:is(:hover, :focus-visible), [class$=-btn]:is(:hover, :focus-visible) {
+.speed-controls .speed-increase:is(:hover, :focus-visible),
+.speed-controls .speed-decrease:is(:hover, :focus-visible), [class$=-btn]:is(:hover, :focus-visible) {
     color: var(--text1);
     background-color: var(--surface3);
 }
@@ -207,37 +207,30 @@ body {
     display: inline-grid;
     grid: "speed-display speed-increase" "speed-display speed-decrease"/4em 1.5em;
     border-radius: 0.5rem;
-    border: 1px solid var(--surface4);
-    background-color: var(--surface4);
-    gap: 1px;
+    border: thin solid var(--surface4);
 }
-.speed-controls > * {
-    background-color: var(--surface2);
-}
-
-#speed-display {
+.speed-controls #speed-display {
     grid-area: speed-display;
+    border-right: thin solid var(--surface4);
     text-align: center;
     cursor: text;
     border-bottom-left-radius: inherit;
     border-top-left-radius: inherit;
     box-shadow: inset 0 0 0.25em hsl(var(--surface-shadow)/calc(var(--shadow-strength) + 15%));
 }
-#speed-display::-webkit-inner-spin-button {
+.speed-controls #speed-display::-webkit-inner-spin-button {
     display: none;
 }
-
-.speed-increase,
-.speed-decrease {
+.speed-controls .speed-increase,
+.speed-controls .speed-decrease {
     font-size: 1rem;
 }
-
-.speed-increase {
+.speed-controls .speed-increase {
     grid-area: speed-increase;
     border-top-right-radius: inherit;
+    border-bottom: thin solid var(--surface4);
 }
-
-.speed-decrease {
+.speed-controls .speed-decrease {
     grid-area: speed-decrease;
     border-bottom-right-radius: inherit;
 }/*# sourceMappingURL=style.css.map */

@@ -38,6 +38,8 @@ The following keyboard shortcuts are supported:
 | `P` | Toggle PiP |
 | `F`<br>`Enter` | Toggle Fullscreen |
 
+[![Available in the Chrome Web Store](https://user-images.githubusercontent.com/50383865/166124241-0a01a0b4-855a-44be-8f24-b823bb1ed7bd.png)](https://chrome.google.com/webstore/detail/player-for-local-videos/jobmoeleihhccoboiljgojnjkejppiih)
+
 [^note]: The mechanism is based on the file name, so the video location won't be restored if the video is renamed. The time is stored in `localStorage` and gets automatically deleted when a video ends.
 
 [^1]: `Cmd+Shift+O` on macOS. Customizable under `chrome://extensions/shortcuts`

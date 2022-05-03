@@ -89,15 +89,6 @@ body {
     }
 }
 
-%hover-transition {
-    transition: .5s;
-
-    &:is(:hover, :focus-visible) {
-        color: var(--text1);
-        background-color: var(--surface3);
-    }
-}
-
 .controls {
     position: relative;
 
@@ -145,13 +136,16 @@ body {
 }
 
 [class$="-btn"] {
-    @extend %hover-transition;
     padding: calc(var(--spacing) * 2/3);
     border-radius: 50%;
 
     user-select: none;
 
+    transition: .5s;
+
     &:is(:hover, :focus-visible) {
+        color: var(--text1);
+        background-color: var(--surface3);
         box-shadow: 0 0 1px;
     }
 }
@@ -188,8 +182,14 @@ body {
 
     .speed-increase,
     .speed-decrease {
-        @extend %hover-transition;
         font-size: 1rem;
+
+        transition: .5s;
+
+        &:is(:hover, :focus-visible) {
+            color: var(--text1);
+            background-color: var(--surface3);
+        }
     }
 
     .speed-increase {

@@ -140,16 +140,6 @@ body {
     border: medium solid var(--surface4);
 }
 
-.speed-controls .speed-increase,
-.speed-controls .speed-decrease, [class$=-btn] {
-    transition: 0.5s;
-}
-.speed-controls .speed-increase:is(:hover, :focus-visible),
-.speed-controls .speed-decrease:is(:hover, :focus-visible), [class$=-btn]:is(:hover, :focus-visible) {
-    color: var(--text1);
-    background-color: var(--surface3);
-}
-
 .controls {
     position: relative;
     display: flex;
@@ -197,8 +187,11 @@ body {
        -moz-user-select: none;
         -ms-user-select: none;
             user-select: none;
+    transition: 0.5s;
 }
 [class$=-btn]:is(:hover, :focus-visible) {
+    color: var(--text1);
+    background-color: var(--surface3);
     box-shadow: 0 0 1px;
 }
 
@@ -224,6 +217,12 @@ body {
 .speed-controls .speed-increase,
 .speed-controls .speed-decrease {
     font-size: 1rem;
+    transition: 0.5s;
+}
+.speed-controls .speed-increase:is(:hover, :focus-visible),
+.speed-controls .speed-decrease:is(:hover, :focus-visible) {
+    color: var(--text1);
+    background-color: var(--surface3);
 }
 .speed-controls .speed-increase {
     grid-area: speed-increase;

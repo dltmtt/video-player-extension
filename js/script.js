@@ -44,7 +44,7 @@ dropOverlay.addEventListener('drop', function (e) {
     videoObjURL = URL.createObjectURL(file)
     video.src = videoObjURL
 
-    fileName.innerText = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
+    fileName.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
     videoId = `Timer for ${file.name}`
 
     dropOverlay.hidden = true
@@ -64,16 +64,16 @@ const speedDecrease = document.querySelector('.speed-decrease')
 // Play/pause
 playBtn.onclick = togglePlay
 video.onclick = togglePlay
-video.onpause = () => { playBtn.innerText = 'play_arrow' }
-video.onplay = () => { playBtn.innerText = 'pause' }
+video.onpause = () => { playBtn.textContent = 'play_arrow' }
+video.onplay = () => { playBtn.textContent = 'pause' }
 
 // Fullscreen
 fullscreenBtn.onclick = toggleFullScreen
 document.onfullscreenchange = function () {
     if (document.fullscreenElement)
-        fullscreenBtn.innerText = 'fullscreen_exit'
+        fullscreenBtn.textContent = 'fullscreen_exit'
     else
-        fullscreenBtn.innerText = 'fullscreen'
+        fullscreenBtn.textContent = 'fullscreen'
 }
 
 video.addEventListener('dblclick', toggleFullScreen)
@@ -120,8 +120,8 @@ video.addEventListener('loadedmetadata', function () {
     // Restore video position from local storage
     this.currentTime = localStorage.getItem(videoId)
 
-    timeRemaining.innerHTML = `-${secondsToTime(this.duration - this.currentTime)}`
-    duration.innerHTML = secondsToTime(this.duration)
+    timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
+    duration.textContent = secondsToTime(this.duration)
     videoBar.setAttribute('max', this.duration)
 })
 
@@ -135,8 +135,8 @@ video.addEventListener('timeupdate', function () {
         localStorage.setItem(videoId, this.currentTime)
 
         // Update time indicator
-        currentTime.innerHTML = secondsToTime(this.currentTime)
-        timeRemaining.innerHTML = `-${secondsToTime(this.duration - this.currentTime)}`
+        currentTime.textContent = secondsToTime(this.currentTime)
+        timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
     }
 })
 
@@ -145,8 +145,8 @@ videoBar.addEventListener('input', function () {
     video.currentTime = this.value
 
     // Needed to show real-time the time corresponding to the progress bar
-    currentTime.innerHTML = secondsToTime(video.currentTime)
-    timeRemaining.innerHTML = `-${secondsToTime(video.duration - video.currentTime)}`
+    currentTime.textContent = secondsToTime(video.currentTime)
+    timeRemaining.textContent = `-${secondsToTime(video.duration - video.currentTime)}`
 })
 
 // videoBar also has tabindex="-1"
@@ -244,12 +244,12 @@ function toggleFullScreen() {
 }
 
 function toggleZoom() {
-    if (zoomBtn.innerText === 'zoom_out_map') {
+    if (zoomBtn.textContent === 'zoom_out_map') {
         video.style.objectFit = 'cover'
-        zoomBtn.innerText = 'crop_free'
+        zoomBtn.textContent = 'crop_free'
     } else {
         video.style.objectFit = 'contain'
-        zoomBtn.innerText = 'zoom_out_map'
+        zoomBtn.textContent = 'zoom_out_map'
     }
 }
 

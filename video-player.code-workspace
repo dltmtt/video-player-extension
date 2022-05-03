@@ -14,12 +14,6 @@
         "javascript.format.semicolons": "remove",
         "liveSassCompile.settings.formats": [
             {
-                "format": "expanded",
-                "extensionName": ".css",
-                "savePath": "/css",
-                "indentWidth": 4
-            },
-            {
                 "format": "compressed",
                 "extensionName": ".min.css",
                 "savePath": "/css"

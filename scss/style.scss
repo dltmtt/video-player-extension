@@ -100,10 +100,6 @@ body {
     background-color: var(--surface2);
 }
 
-.basic-controls {
-    user-select: none;
-}
-
 #video-bar {
     position: absolute;
     inset: 0;
@@ -139,6 +135,10 @@ body {
     }
 }
 
+.basic-controls {
+    user-select: none;
+}
+
 [class$="-btn"] {
     padding: calc(var(--spacing) * 2/3);
     border-radius: 50%;
@@ -167,6 +167,8 @@ body {
     --border: thin solid var(--surface4);
     border-radius: .5rem;
     border: var(--border);
+
+    user-select: none;
 }
 
 #speed-display {

@@ -1,7 +1,7 @@
 'use strict'
 
 // Put this, along with HTML elements, in an init function
-var modifierPressed = false
+var modPressedDuringKeydown = false
 
 // DRAG 'N' DROP
 const dragPanel = document.querySelector('#drag-panel')
@@ -172,7 +172,7 @@ video.onended = () => { localStorage.removeItem(videoId) }
 // KEYBOARD SHORTCUTS
 document.addEventListener('keydown', (event) => {
     if (event.shiftKey) {
-        modifierPressed = true
+        modPressedDuringKeydown = true
         replayBtn.textContent = 'replay_30'
         forwardBtn.textContent = 'forward_30'
         speedIncrease.textContent = 'keyboard_double_arrow_up'
@@ -229,14 +229,14 @@ document.addEventListener('keydown', (event) => {
 })
 
 document.addEventListener('keyup', (event) => {
-    if (event.shiftKey)
-        return
-
-    modifierPressed = false
-    replayBtn.textContent = 'replay_10'
-    forwardBtn.textContent = 'forward_10'
-    speedIncrease.textContent = 'keyboard_arrow_up'
-    speedDecrease.textContent = 'keyboard_arrow_down'
+    let modPressedDuringKeyup = event.shiftKey
+    if (modPressedDuringKeydown && !modPressedDuringKeyup) {
+        modPressedDuringKeydown = false
+        replayBtn.textContent = 'replay_10'
+        forwardBtn.textContent = 'forward_10'
+        speedIncrease.textContent = 'keyboard_arrow_up'
+        speedDecrease.textContent = 'keyboard_arrow_down'
+    }
 })
 
 
@@ -259,19 +259,19 @@ function addToSpeed(delta) {
 }
 
 function speedUp() {
-    addToSpeed(modifierPressed ? 1 : 0.1)
+    addToSpeed(modPressedDuringKeydown ? 1 : 0.1)
 }
 
 function slowDown() {
-    addToSpeed(modifierPressed ? -1 : -0.1)
+    addToSpeed(modPressedDuringKeydown ? -1 : -0.1)
 }
 
 function replay() {
-    video.currentTime -= modifierPressed ? 30 : 10
+    video.currentTime -= modPressedDuringKeydown ? 30 : 10
 }
 
 function forward() {
-    video.currentTime += modifierPressed ? 30 : 10
+    video.currentTime += modPressedDuringKeydown ? 30 : 10
 }
 
 function togglePictureInPicture() {

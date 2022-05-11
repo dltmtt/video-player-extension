@@ -11,7 +11,11 @@
 <link rel="icon" href="icons/favicon.ico" sizes="144x144 96x96 48x48">
 <link rel="stylesheet" href="css/style.min.css">
 
-<div class="droppable" id="drag-panel">Drag the video here</div>
+<div class="droppable" id="drag-panel">
+    Drag and drop the video
+    <input type="file" id="file-input" accept="video/*">
+    <button id="file-select">or click here</button>
+</div>
 <div id="drop-overlay" hidden></div>
 
 <div class="player droppable" hidden>

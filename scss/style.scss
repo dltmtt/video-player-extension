@@ -47,6 +47,7 @@ body {
 #drag-panel {
     display: grid;
     place-content: center;
+    place-items: center;
 
     font-weight: bold;
     font-size: 2.25rem;
@@ -58,6 +59,17 @@ body {
     &[data-file-hover] {
         box-shadow: inset 0 0 .75em .25em;
     }
+}
+
+input[type="file"] {
+    display: none;
+}
+
+#file-select {
+    background: transparent;
+    font-size: smaller;
+    padding: .25em .5em;
+    width: fit-content;
 }
 
 #drop-overlay {

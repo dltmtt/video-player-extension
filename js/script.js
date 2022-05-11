@@ -32,26 +32,15 @@ dropOverlay.addEventListener('dragover', function (e) {
     e.preventDefault()
 })
 
-dropOverlay.addEventListener('drop', function (e) {
-    e.preventDefault()
+dropOverlay.addEventListener('drop', handleFiles)
 
-    if (videoObjURL === undefined) {
-        dragPanel.hidden = true
-        player.hidden = false
-    } else {
-        URL.revokeObjectURL(videoObjURL)
-        skipTimeUpdate = true
-    }
 
-    const file = e.dataTransfer.files[0]
-    videoObjURL = URL.createObjectURL(file)
-    video.src = videoObjURL
-
-    fileName.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
-    videoId = `Timer for ${file.name}`
-
-    dropOverlay.hidden = true
-    droppableElements.forEach(droppable => delete droppable.dataset.fileHover)
+// FILE INPUT
+const fileInput = document.querySelector('#file-input')
+const fileSelect = document.querySelector('#file-select')
+fileInput.addEventListener('change', handleFiles)
+fileSelect.addEventListener('click', () => {
+    fileInput.click()
 })
 
 
@@ -241,6 +230,31 @@ document.addEventListener('keyup', (event) => {
 
 
 // AUXILIARY FUNCTIONS
+function handleFiles(event) {
+    // This could either be a DragEvent or an Event of type 'change'
+    event.preventDefault()
+
+    if (videoObjURL === undefined) {
+        dragPanel.hidden = true
+        player.hidden = false
+    } else {
+        URL.revokeObjectURL(videoObjURL)
+        skipTimeUpdate = true
+    }
+
+    const file = (this.files) ? this.files[0] : event.dataTransfer.files[0]
+    videoObjURL = URL.createObjectURL(file)
+    video.src = videoObjURL
+
+    fileName.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
+    videoId = `Timer for ${file.name}`
+
+    dropOverlay.hidden = true
+    droppableElements.forEach(droppable => {
+        delete droppable.dataset.fileHover
+    })
+}
+
 function togglePlay() {
     video.paused ? video.play() : video.pause()
 }

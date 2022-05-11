@@ -1,6 +1,5 @@
 'use strict'
 
-// Put this, along with HTML elements, in an init function
 var modPressedDuringKeydown = false
 
 // DRAG 'N' DROP
@@ -13,8 +12,8 @@ var videoObjURL
 var videoId
 
 droppableElements.forEach(droppable => {
-    droppable.addEventListener('dragenter', function (e) {
-        if (e.dataTransfer.items[0].type.includes('video')) {
+    droppable.addEventListener('dragenter', function (event) {
+        if (event.dataTransfer.items[0].type.includes('video')) {
             this.dataset.fileHover = true
             dropOverlay.hidden = false
         }
@@ -28,8 +27,8 @@ dropOverlay.addEventListener('dragleave', function () {
     })
 })
 
-dropOverlay.addEventListener('dragover', function (e) {
-    e.preventDefault()
+dropOverlay.addEventListener('dragover', function (event) {
+    event.preventDefault()
 })
 
 dropOverlay.addEventListener('drop', handleFiles)

@@ -26,6 +26,8 @@
 
     --surface-shadow-dark: var(--hue) 50% 3%;
     --shadow-strength-dark: 80%;
+
+    accent-color: var(--main-color);
 }
 
 @media (prefers-color-scheme: light) {

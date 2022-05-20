@@ -159,9 +159,6 @@ video.onended = () => { localStorage.removeItem(videoId) }
 
 // KEYBOARD SHORTCUTS
 document.addEventListener('keydown', (event) => {
-    if (event.target.tagName === 'BUTTON')
-        event.target.blur()
-
     if (event.shiftKey) {
         modPressedDuringKeydown = true
         replayBtn.textContent = 'replay_30'

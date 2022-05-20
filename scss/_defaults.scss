@@ -9,11 +9,14 @@
 
 button,
 input {
-    cursor: pointer;
-
     font-family: inherit;
     color: inherit;
     background: inherit;
+}
+
+button,
+input[type="range"] {
+    cursor: pointer;
 }
 
 label[for] {

@@ -10,9 +10,13 @@
     --spacing: .75rem;
 }
 
-button,
-input {
-    border: 0;
+* {
+    margin: 0;
+    padding: 0;
+}
+
+[hidden] {
+    display: none !important;
 }
 
 html,
@@ -26,10 +30,25 @@ body {
     font: .8375rem 'JetBrains Mono', monospace;
 }
 
+#drop-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+button,
+input[type="range"] {
+    cursor: pointer;
+    font-family: inherit;
+    color: inherit;
+    border: 0;
+}
+
 #drag-panel {
     display: grid;
     place-content: center;
     place-items: center;
+    gap: var(--spacing);
 
     font-weight: bold;
     font-size: 2.25rem;
@@ -44,20 +63,33 @@ body {
 }
 
 input[type="file"] {
-    display: none;
-}
+    max-inline-size: 18em;
 
-#file-select {
+    font-size: .75em;
     background: transparent;
-    font-size: smaller;
-    padding: .25em .5em;
-    width: fit-content;
-}
 
-#drop-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
+    border-radius: .35em;
+    border: 2px solid var(--surface4);
+
+    &::file-selector-button {
+        font: inherit;
+        color: var(--text2);
+        background: var(--surface2);
+
+        border: none;
+        border-radius: inherit;
+        border-inline-end: inherit;
+
+        padding-block: .25em;
+        padding-inline: .5em;
+        margin-inline-end: .5em;
+
+        transition: background-color .35s;
+
+        &:active {
+            background-color: var(--surface1);
+        }
+    }
 }
 
 .player {
@@ -102,7 +134,7 @@ input[type="file"] {
     height: .375rem;
     transition: .25s;
 
-    &:hover {
+    &:is(:hover, :focus-visible) {
         height: .5rem;
     }
 }
@@ -119,7 +151,7 @@ input[type="file"] {
 #file-name {
     margin: auto 0;
 
-    max-width: 30ch;
+    max-inline-size: 30ch;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -151,7 +183,7 @@ input[type="file"] {
 
 .speed-controls {
     // Push to the right
-    margin-left: auto;
+    margin-inline-start: auto;
 
     display: inline-grid;
     grid:
@@ -173,6 +205,7 @@ input[type="file"] {
     text-align: center;
     cursor: text;
 
+    border: 0;
     border-start-start-radius: inherit;
     border-end-start-radius: inherit;
     box-shadow: inset 0 0 .25em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));

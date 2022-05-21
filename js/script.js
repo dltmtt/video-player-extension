@@ -36,11 +36,7 @@ dropOverlay.addEventListener('drop', handleFiles)
 
 // FILE INPUT
 const fileInput = document.querySelector('#file-input')
-const fileSelect = document.querySelector('#file-select')
 fileInput.addEventListener('change', handleFiles)
-fileSelect.addEventListener('click', () => {
-    fileInput.click()
-})
 
 
 // NAVIGATION

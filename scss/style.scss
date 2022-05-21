@@ -71,12 +71,6 @@ input[type="file"] {
 
     border-radius: .35em;
 
-    &:hover {
-        background: white;
-        color: red;
-        border: 4px color blue;
-    }
-
     &::file-selector-button {
         font: inherit;
         color: var(--text2);

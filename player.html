@@ -23,18 +23,16 @@
     <div class="controls" aria-controls="main-video">
         <input type="range" aria-label="Video progess bar" value="0" step="any" tabindex="-1" id="video-bar">
 
-        <div class="no-space-group">
-            <button type="button" aria-label="Toggle play/pause" class="material-icons play-btn">play_arrow</button>
-            <button type="button" aria-label="Replay 10 s" class="material-icons replay-btn">replay_10</button>
-            <button type="button" aria-label="Forward 10 s" class="material-icons forward-btn">forward_10</button>
-        </div>
+        <button type="button" aria-label="Toggle play/pause" class="material-icons play-btn">play_arrow</button>
+        <button type="button" aria-label="Replay 10 s" class="material-icons replay-btn">replay_10</button>
+        <button type="button" aria-label="Forward 10 s" class="material-icons forward-btn">forward_10</button>
 
         <button type="button" aria-label="Toggle time elapsed/time remaining" id="time-indicator">
             <time role="timer" class="current-time">00:00</time>
             <time role="timer" class="time-remaining" hidden></time>
             <time role="timer" class="duration"></time>
         </button>
-
+        •
         <div aria-label="Video name" id="file-name"></div>
 
         <div class="speed-controls">
@@ -45,11 +43,8 @@
             <button type="button" aria-label="Slow down" aria-controls="speed-display"
                 class="material-icons speed-decrease">keyboard_arrow_down</button>
         </div>
-        <div class="no-space-group">
-            <button type="button" aria-label="Toggle zoom" class="material-icons zoom-btn">zoom_out_map</button>
-            <button type="button" aria-label="Toggle fullscreen"
-                class="material-icons fullscreen-btn">fullscreen</button>
-        </div>
+        <button type="button" aria-label="Toggle zoom" class="material-icons zoom-btn">zoom_out_map</button>
+        <button type="button" aria-label="Toggle fullscreen" class="material-icons fullscreen-btn">fullscreen</button>
     </div>
 </div>
 

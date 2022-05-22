@@ -1,4 +1,3 @@
-@use "defaults";
 @use "colors";
 @use "fonts";
 
@@ -34,14 +33,6 @@ body {
     position: absolute;
     inset: 0;
     z-index: 1;
-}
-
-button,
-input[type="range"] {
-    cursor: pointer;
-    font-family: inherit;
-    color: inherit;
-    border: 0;
 }
 
 #drag-panel {
@@ -85,7 +76,11 @@ input[type="file"] {
         padding-inline: var(--spacing);
         margin-inline-end: var(--spacing);
 
-        transition: background-color .35s;
+        transition: .35s;
+
+        &:hover {
+            box-shadow: 0 0 .75em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 25%))
+        }
 
         &:active {
             box-shadow: none;
@@ -103,7 +98,6 @@ input[type="file"] {
     video {
         flex: 1;
         min-height: 0;
-
         background-color: var(--surface2);
 
         transition: .5s;
@@ -127,17 +121,27 @@ input[type="file"] {
     background-color: var(--surface2);
 }
 
+button,
+input {
+    background: transparent;
+    font-family: inherit;
+    color: inherit;
+    border: 0;
+}
+
+button,
+input[type="range"]::-webkit-slider-thumb {
+    cursor: pointer;
+}
+
 #video-bar {
     position: absolute;
     inset: 0;
     transform: translateY(-50%);
 
-    height: .375rem;
-    transition: .25s;
+    accent-color: auto;
 
-    &:is(:hover, :focus-visible) {
-        height: .5rem;
-    }
+    height: .375rem;
 }
 
 #time-indicator,

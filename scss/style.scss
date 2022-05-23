@@ -166,7 +166,7 @@ input[type="file"] {
         aspect-ratio: 1;
 
         &:is(:hover, :focus-visible) {
-            font-variation-settings: 'FILL' 1, 'opsz' 24;
+            font-variation-settings: 'FILL' 1;
         }
     }
 

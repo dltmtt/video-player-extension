@@ -72,18 +72,6 @@ speedControls.onchange = function () {
     video.playbackRate = clamp(0.1, this.value, 16)
 }
 
-speedControls.addEventListener('keydown', function (event) {
-    switch (event.key) {
-        case 'ArrowUp':
-            event.preventDefault()
-            speedUp()
-            break
-        case 'ArrowDown':
-            event.preventDefault()
-            slowDown()
-    }
-})
-
 // Zoom
 zoomBtn.onclick = toggleZoom
 
@@ -163,11 +151,11 @@ document.addEventListener('keydown', (event) => {
             break
         case 's': // Slow down
         case 'S':
-            slowDown()
+            addToSpeed(modPressedDuringKeydown ? -1 : -0.1)
             break
         case 'd': // Speed up
         case 'D':
-            speedUp()
+            addToSpeed(modPressedDuringKeydown ? 1 : 0.1)
             break
         case 'z': // Rewind
         case 'Z':
@@ -256,14 +244,6 @@ function clamp(min, value, max) {
 function addToSpeed(delta) {
     // Clamp speed between 0.1 and 16 (Chrome range is [0.0625, 16])
     video.playbackRate = clamp(0.1, (video.playbackRate + delta).toFixed(2), 16)
-}
-
-function speedUp() {
-    addToSpeed(modPressedDuringKeydown ? 1 : 0.1)
-}
-
-function slowDown() {
-    addToSpeed(modPressedDuringKeydown ? -1 : -0.1)
 }
 
 function replay() {

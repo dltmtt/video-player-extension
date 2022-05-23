@@ -68,7 +68,7 @@ video.onratechange = function () {
     speedControls.value = this.playbackRate.toFixed(2)
 }
 
-speedControls.oninput = function () {
+speedControls.onchange = function () {
     video.playbackRate = clamp(0.1, this.value, 16)
 }
 

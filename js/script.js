@@ -44,9 +44,7 @@ const player = document.querySelector('.player')
 const playBtn = document.querySelector('.play-btn')
 const fullscreenBtn = document.querySelector('.fullscreen-btn')
 const zoomBtn = document.querySelector('.zoom-btn')
-const speedDisplay = document.querySelector('#speed-display')
-const speedIncrease = document.querySelector('.speed-increase')
-const speedDecrease = document.querySelector('.speed-decrease')
+const speedControls = document.querySelector('#speed-controls')
 
 // Play/pause
 playBtn.onclick = togglePlay
@@ -67,17 +65,14 @@ video.addEventListener('dblclick', toggleFullScreen)
 
 // Speed
 video.onratechange = function () {
-    speedDisplay.value = this.playbackRate.toFixed(2)
+    speedControls.value = this.playbackRate.toFixed(2)
 }
 
-speedIncrease.onclick = speedUp
-speedDecrease.onclick = slowDown
-
-speedDisplay.oninput = function () {
+speedControls.oninput = function () {
     video.playbackRate = clamp(0.1, this.value, 16)
 }
 
-speedDisplay.addEventListener('keydown', function (event) {
+speedControls.addEventListener('keydown', function (event) {
     switch (event.key) {
         case 'ArrowUp':
             event.preventDefault()
@@ -159,8 +154,6 @@ document.addEventListener('keydown', (event) => {
         modPressedDuringKeydown = true
         replayBtn.textContent = 'replay_30'
         forwardBtn.textContent = 'forward_30'
-        speedIncrease.textContent = 'keyboard_double_arrow_up'
-        speedDecrease.textContent = 'keyboard_double_arrow_down'
     }
 
     switch (event.key) {
@@ -218,8 +211,6 @@ document.addEventListener('keyup', (event) => {
         modPressedDuringKeydown = false
         replayBtn.textContent = 'replay_10'
         forwardBtn.textContent = 'forward_10'
-        speedIncrease.textContent = 'keyboard_arrow_up'
-        speedDecrease.textContent = 'keyboard_arrow_down'
     }
 })
 

@@ -53,7 +53,7 @@ body {
     color: var(--text2);
     background-image: radial-gradient(circle at 100% 0, var(--surface1), var(--surface1) 50%, var(--surface3) 75%, var(--surface1) 75%);
 
-    transition-duration: box-shadow var(--duration);
+    transition: box-shadow var(--duration);
 
     &[data-file-hover] {
         box-shadow: inset 0 0 .75em .25em;

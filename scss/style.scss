@@ -177,7 +177,13 @@ input[type="file"] {
     inset: 0;
     transform: translateY(-50%);
 
-    height: .375rem;
+    transition: var(--duration);
+    transition-property: block-size, height;
+    block-size: .375rem;
+
+    &:is(:hover, :focus-visible) {
+        block-size: .5rem;
+    }
 }
 
 input[type="range"]::-webkit-slider-thumb {

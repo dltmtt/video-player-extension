@@ -6,13 +6,13 @@ This a video player for local videos whose main features are:
 * Works offline
 
 <div float="left">
-  <img width="49.5%" alt="welcome_light" src="https://user-images.githubusercontent.com/50383865/165765909-c72741f4-2a99-40aa-b3c6-5a8e622c5e40.png">
-  <img width="49.5%" alt="welcome_dark" src="https://user-images.githubusercontent.com/50383865/165765936-fbbebb27-6a37-4469-a44a-9b03ac261354.png">
+	<img width="49.5%" alt="welcome_light" src="https://user-images.githubusercontent.com/50383865/165765909-c72741f4-2a99-40aa-b3c6-5a8e622c5e40.png">
+	<img width="49.5%" alt="welcome_dark" src="https://user-images.githubusercontent.com/50383865/165765936-fbbebb27-6a37-4469-a44a-9b03ac261354.png">
 </div>
 
 <div float="left">
-  <img width="49.5%" alt="player_light" src="https://user-images.githubusercontent.com/50383865/165766797-734916fd-f3e1-4a96-ac27-b2423431e158.png">
-  <img width="49.5%" alt="player_dark" src="https://user-images.githubusercontent.com/50383865/165766804-6310aa0c-4a04-426d-b37b-f978b9187222.png">
+	<img width="49.5%" alt="player_light" src="https://user-images.githubusercontent.com/50383865/165766797-734916fd-f3e1-4a96-ac27-b2423431e158.png">
+	<img width="49.5%" alt="player_dark" src="https://user-images.githubusercontent.com/50383865/165766804-6310aa0c-4a04-426d-b37b-f978b9187222.png">
 </div>
 
 ## Usage

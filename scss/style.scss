@@ -123,11 +123,11 @@ input[type="file"] {
 		background-color: var(--surface2);
 
 		transition-duration: var(--duration);
-		transition-property: transform, border-radius, border;
+		transition-property: scale, border-radius, border;
 	}
 
 	&[data-file-hover] video {
-		transform: scale(.75);
+		scale: .75;
 		border-radius: 1rem;
 		border: medium solid var(--surface4);
 	}
@@ -175,7 +175,7 @@ input[type="file"] {
 #video-bar {
 	position: absolute;
 	inset: 0;
-	transform: translateY(-50%);
+	translate: 0 -50%;
 
 	transition: var(--duration);
 	transition-property: block-size, height;

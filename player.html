@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="css/style.min.css">
 
 <div class="droppable" id="drag-panel">
-	Drag and drop the video
+	<span id="drag-panel-text">Drag and drop the video</span>
 	<input type="file" id="file-input" accept="video/*">
 </div>
 <div id="drop-overlay" hidden></div>
@@ -32,7 +32,7 @@
 			<time role="timer" class="time-remaining" hidden></time>
 			<time role="timer" class="duration"></time>
 		</button>
-		<div aria-label="Video name" id="file-name"></div>
+		<div aria-label="Video name" id="file-name-container"><span id="file-name"></span></div>
 
 		<input type="number" title="" aria-label="Speed controls" value="1.00" min="0.10" max="16" step="0.10"
 			id="speed-controls">

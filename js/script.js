@@ -11,21 +11,15 @@ const video = document.querySelector('video')
 var videoObjURL
 var videoId
 
+// I should be able to check if the file is a video (with event.dataTransfer.items) here, but it doesn't seem to work with Safari
 droppableElements.forEach(droppable => {
-	droppable.addEventListener('dragenter', function (event) {
-		if (event.dataTransfer.items[0].type.includes('video')) {
-			this.dataset.fileHover = true
-			dropOverlay.hidden = false
-		}
+	droppable.addEventListener('dragenter', function () {
+		this.dataset.fileHover = true
+		dropOverlay.hidden = false
 	})
 })
 
-dropOverlay.addEventListener('dragleave', function () {
-	dropOverlay.hidden = true
-	droppableElements.forEach(droppable => {
-		delete droppable.dataset.fileHover
-	})
-})
+dropOverlay.addEventListener('dragleave', handleDragLeaveOrWrongFile)
 
 dropOverlay.addEventListener('dragover', function (event) {
 	event.preventDefault()
@@ -54,8 +48,8 @@ video.onplay = () => { playBtn.textContent = 'pause' }
 
 // Fullscreen
 fullscreenBtn.onclick = toggleFullScreen
-document.onfullscreenchange = function () {
-	if (document.fullscreenElement)
+document.onfullscreenchange = document.onwebkitfullscreenchange = function () {
+	if (document.fullscreenElement || document.webkitFullscreenElement)
 		fullscreenBtn.textContent = 'fullscreen_exit'
 	else
 		fullscreenBtn.textContent = 'fullscreen'
@@ -202,12 +196,31 @@ document.addEventListener('keyup', (event) => {
 	}
 })
 
+function handleDragLeaveOrWrongFile() {
+	dropOverlay.hidden = true
+	droppableElements.forEach(droppable => {
+		delete droppable.dataset.fileHover
+	})
+}
 
 // AUXILIARY FUNCTIONS
 function handleFiles(event) {
 	// This could either be a DragEvent or an Event of type 'change'
 	event.preventDefault()
 
+	// If the event is a DragEvent, but the file is not a video, then ignore it
+	if (event.dataTransfer && !event.dataTransfer.items[0].type.includes('video')) {
+		dropOverlay.hidden = true
+		droppableElements.forEach(droppable => {
+			delete droppable.dataset.fileHover
+		})
+
+		return
+	}
+
+	const file = (this.files) ? this.files[0] : event.dataTransfer.items[0].getAsFile()
+
+	// If there isn't already a video playing, show the player
 	if (videoObjURL === undefined) {
 		dragPanel.hidden = true
 		player.hidden = false
@@ -216,7 +229,6 @@ function handleFiles(event) {
 		skipTimeUpdate = true
 	}
 
-	const file = (this.files) ? this.files[0] : event.dataTransfer.files[0]
 	videoObjURL = URL.createObjectURL(file)
 	video.src = videoObjURL
 
@@ -263,10 +275,10 @@ function togglePictureInPicture() {
 }
 
 function toggleFullScreen() {
-	if (document.fullscreenElement) {
-		document.exitFullscreen()
+	if (document.fullscreenElement || document.webkitFullscreenElement) {
+		document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen()
 	} else {
-		player.requestFullscreen()
+		player.requestFullscreen ? player.requestFullscreen() : player.webkitRequestFullscreen()
 	}
 }
 

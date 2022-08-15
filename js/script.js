@@ -19,7 +19,7 @@ droppableElements.forEach(droppable => {
 	})
 })
 
-dropOverlay.addEventListener('dragleave', handleDragLeaveOrWrongFile)
+dropOverlay.addEventListener('dragleave', handleDragEnd)
 
 dropOverlay.addEventListener('dragover', function (event) {
 	event.preventDefault()
@@ -92,22 +92,27 @@ video.addEventListener('loadedmetadata', function () {
 })
 
 video.addEventListener('timeupdate', function () {
-	if (!skipTimeUpdate) {
-		// Update video bar position
-		videoBar.value = this.currentTime
-		videoBar.ariaValueText = secondsToTextTime(this.currentTime)
+	if (skipTimeUpdate)
+		return
 
-		// Save time in local storage
-		localStorage.setItem(videoId, this.currentTime)
+	// Update video bar position
+	videoBar.value = this.currentTime
+	videoBar.ariaValueText = secondsToTextTime(this.currentTime)
+	videoBar.style.setProperty("--progress", (videoBar.value * 100 / video.duration) + "%")
 
-		// Update time indicator
-		currentTime.textContent = secondsToTime(this.currentTime)
-		timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
-	}
+	// Save time in local storage
+	localStorage.setItem(videoId, this.currentTime)
+
+	// Update time indicator
+	currentTime.textContent = secondsToTime(this.currentTime)
+	timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
+
 })
 
 // Seek to the point clicked on the progress bar
 videoBar.addEventListener('input', function () {
+	videoBar.style.setProperty("--progress", (this.value * 100 / video.duration) + "%")
+
 	video.currentTime = this.value
 
 	// Needed to show real-time the time corresponding to the progress bar
@@ -196,7 +201,7 @@ document.addEventListener('keyup', (event) => {
 	}
 })
 
-function handleDragLeaveOrWrongFile() {
+function handleDragEnd() {
 	dropOverlay.hidden = true
 	droppableElements.forEach(droppable => {
 		delete droppable.dataset.fileHover
@@ -208,13 +213,9 @@ function handleFiles(event) {
 	// This could either be a DragEvent or an Event of type 'change'
 	event.preventDefault()
 
-	// If the event is a DragEvent, but the file is not a video, then ignore it
+	// If the event is a DragEvent, but the file is not a video, ignore it
 	if (event.dataTransfer && !event.dataTransfer.items[0].type.includes('video')) {
-		dropOverlay.hidden = true
-		droppableElements.forEach(droppable => {
-			delete droppable.dataset.fileHover
-		})
-
+		handleDragEnd()
 		return
 	}
 
@@ -235,10 +236,7 @@ function handleFiles(event) {
 	fileName.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
 	videoId = `Timer for ${file.name}`
 
-	dropOverlay.hidden = true
-	droppableElements.forEach(droppable => {
-		delete droppable.dataset.fileHover
-	})
+	handleDragEnd()
 }
 
 function togglePlay() {

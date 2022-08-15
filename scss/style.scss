@@ -77,8 +77,24 @@ input {
 }
 
 button,
-input[type="range"]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-runnable-track {
 	cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	cursor: grab;
+
+	&:active {
+		cursor: grabbing;
+	}
+}
+
+input[type="number"] {
+	cursor: text;
+
+	&::-webkit-inner-spin-button {
+		cursor: pointer;
+	}
 }
 
 input[type="file"] {
@@ -252,7 +268,6 @@ input[type="range"]::-webkit-slider-thumb {
 	margin-inline-start: auto;
 
 	text-align: center;
-	cursor: text;
 
 	border: thin solid var(--surface4);
 	border-radius: 1.25rem;

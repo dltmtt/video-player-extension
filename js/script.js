@@ -1,55 +1,36 @@
 'use strict'
 
+var modPressedDuringKeydown = false
+
 // DRAG 'N' DROP
 const dragPanel = document.querySelector('#drag-panel')
 const dropOverlay = document.querySelector('#drop-overlay')
 const droppableElements = document.querySelectorAll('.droppable')
+const fileName = document.querySelector('#file-name')
 const video = document.querySelector('video')
 var videoObjURL
 var videoId
 
+// I should be able to check if the file is a video (with event.dataTransfer.items) here, but it doesn't seem to work with Safari
 droppableElements.forEach(droppable => {
-    droppable.addEventListener('dragenter', function (e) {
-        if (e.dataTransfer.items[0].type.includes('video')) {
-            this.dataset.fileHover = true
-            dropOverlay.hidden = false
-        }
-    })
+	droppable.addEventListener('dragenter', function () {
+		this.dataset.fileHover = true
+		dropOverlay.hidden = false
+	})
 })
 
-dropOverlay.addEventListener('dragleave', function () {
-    dropOverlay.hidden = true
-    droppableElements.forEach(droppable => {
-        delete droppable.dataset.fileHover
-    })
+dropOverlay.addEventListener('dragleave', handleDragEnd)
+
+dropOverlay.addEventListener('dragover', function (event) {
+	event.preventDefault()
 })
 
-dropOverlay.addEventListener('dragover', function (e) {
-    e.preventDefault()
-})
+dropOverlay.addEventListener('drop', handleFiles)
 
-dropOverlay.addEventListener('drop', function (e) {
-    e.preventDefault()
 
-    if (videoObjURL === undefined) {
-        dragPanel.hidden = true
-        player.hidden = false
-    } else {
-        URL.revokeObjectURL(videoObjURL)
-        skipTimeUpdate = true
-    }
-
-    const file = e.dataTransfer.files[0]
-    videoObjURL = URL.createObjectURL(file)
-    video.src = videoObjURL
-
-    // The title is the file name without the extension
-    video.title = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
-    videoId = `Timer for ${file.name}`
-
-    dropOverlay.hidden = true
-    droppableElements.forEach(droppable => delete droppable.dataset.fileHover)
-})
+// FILE INPUT
+const fileInput = document.querySelector('#file-input')
+fileInput.addEventListener('change', handleFiles)
 
 
 // NAVIGATION
@@ -57,48 +38,33 @@ const player = document.querySelector('.player')
 const playBtn = document.querySelector('.play-btn')
 const fullscreenBtn = document.querySelector('.fullscreen-btn')
 const zoomBtn = document.querySelector('.zoom-btn')
-const speedDisplay = document.querySelector('#speed-display')
-const speedIncrease = document.querySelector('.speed-increase')
-const speedDecrease = document.querySelector('.speed-decrease')
+const speedControls = document.querySelector('#speed-controls')
 
 // Play/pause
 playBtn.onclick = togglePlay
 video.onclick = togglePlay
-video.onpause = () => { playBtn.innerText = 'play_arrow' }
-video.onplay = () => { playBtn.innerText = 'pause' }
+video.onpause = () => { playBtn.textContent = 'play_arrow' }
+video.onplay = () => { playBtn.textContent = 'pause' }
 
 // Fullscreen
 fullscreenBtn.onclick = toggleFullScreen
-document.onfullscreenchange = function () {
-    if (document.fullscreenElement)
-        fullscreenBtn.innerText = 'fullscreen_exit'
-    else
-        fullscreenBtn.innerText = 'fullscreen'
+document.onfullscreenchange = document.onwebkitfullscreenchange = function () {
+	if (document.fullscreenElement || document.webkitFullscreenElement)
+		fullscreenBtn.textContent = 'fullscreen_exit'
+	else
+		fullscreenBtn.textContent = 'fullscreen'
 }
+
+video.addEventListener('dblclick', toggleFullScreen)
 
 // Speed
 video.onratechange = function () {
-    speedDisplay.value = this.playbackRate.toFixed(2)
+	speedControls.value = this.playbackRate.toFixed(2)
 }
 
-speedIncrease.onclick = () => addToSpeed(0.1)
-speedDecrease.onclick = () => addToSpeed(-0.1)
-
-speedDisplay.oninput = function () {
-    video.playbackRate = clamp(0.1, this.value, 16)
+speedControls.onchange = function () {
+	video.playbackRate = clamp(0.1, this.value, 16)
 }
-
-speedDisplay.addEventListener('keydown', function (e) {
-    switch (e.key) {
-        case 'ArrowUp':
-            e.preventDefault()
-            addToSpeed(0.1)
-            break
-        case 'ArrowDown':
-            e.preventDefault()
-            addToSpeed(-0.1)
-    }
-})
 
 // Zoom
 zoomBtn.onclick = toggleZoom
@@ -109,52 +75,60 @@ const videoBar = document.querySelector('#video-bar')
 const timeIndicator = document.querySelector('#time-indicator')
 const currentTime = document.querySelector('.current-time')
 const timeRemaining = document.querySelector('.time-remaining')
+const replayBtn = document.querySelector('.replay-btn')
+const forwardBtn = document.querySelector('.forward-btn')
 const duration = document.querySelector('.duration')
 var skipTimeUpdate
 
 video.addEventListener('loadedmetadata', function () {
-    skipTimeUpdate = false
+	skipTimeUpdate = false
 
-    // Restore video position from local storage
-    this.currentTime = localStorage.getItem(videoId)
+	// Restore video position from local storage
+	this.currentTime = localStorage.getItem(videoId)
 
-    timeRemaining.innerHTML = `-${secondsToTime(this.duration - this.currentTime)}`
-    duration.innerHTML = secondsToTime(this.duration)
-    videoBar.setAttribute('max', this.duration)
-
-    document.querySelector('#file-name').innerText = this.title
+	timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
+	duration.textContent = secondsToTime(this.duration)
+	videoBar.setAttribute('max', this.duration)
 })
 
 video.addEventListener('timeupdate', function () {
-    if (!skipTimeUpdate) {
-        // Update video bar position
-        videoBar.value = this.currentTime
-        videoBar.ariaValueText = secondsToTextTime(this.currentTime)
+	if (skipTimeUpdate)
+		return
 
-        // Save time in local storage
-        localStorage.setItem(videoId, this.currentTime)
+	// Update video bar position
+	videoBar.value = this.currentTime
+	videoBar.ariaValueText = secondsToTextTime(this.currentTime)
+	videoBar.style.setProperty("--progress", (videoBar.value * 100 / video.duration) + "%")
 
-        // Update time indicator
-        currentTime.innerHTML = secondsToTime(this.currentTime)
-        timeRemaining.innerHTML = `-${secondsToTime(this.duration - this.currentTime)}`
-    }
+	// Save time in local storage
+	localStorage.setItem(videoId, this.currentTime)
+
+	// Update time indicator
+	currentTime.textContent = secondsToTime(this.currentTime)
+	timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
+
 })
 
 // Seek to the point clicked on the progress bar
 videoBar.addEventListener('input', function () {
-    video.currentTime = this.value
+	videoBar.style.setProperty("--progress", (this.value * 100 / video.duration) + "%")
 
-    // Needed to show real-time the time corresponding to the progress bar
-    currentTime.innerHTML = secondsToTime(video.currentTime)
-    timeRemaining.innerHTML = `-${secondsToTime(video.duration - video.currentTime)}`
+	video.currentTime = this.value
+
+	// Needed to show real-time the time corresponding to the progress bar
+	currentTime.textContent = secondsToTime(video.currentTime)
+	timeRemaining.textContent = `-${secondsToTime(video.duration - video.currentTime)}`
 })
 
 // videoBar also has tabindex="-1"
 videoBar.onfocus = function () { this.blur() }
 
+replayBtn.onclick = replay
+forwardBtn.onclick = forward
+
 // Toggle current time/remaining time
 timeIndicator.addEventListener('click', function () {
-    [timeRemaining.hidden, currentTime.hidden] = [currentTime.hidden, timeRemaining.hidden]
+	[timeRemaining.hidden, currentTime.hidden] = [currentTime.hidden, timeRemaining.hidden]
 })
 
 // Delete video position from local storage
@@ -163,117 +137,180 @@ video.onended = () => { localStorage.removeItem(videoId) }
 
 // KEYBOARD SHORTCUTS
 document.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        case ' ': // Toggle play
-            if (document.activeElement.tagName !== 'BUTTON')
-                togglePlay()
-            break
-        case 's': // Slow down
-            addToSpeed(-0.1)
-            break
-        case 'd': // Speed up
-            addToSpeed(0.1)
-            break
-        case 'z': // Rewind
-        case 'ArrowLeft':
-        case 'ArrowDown':
-            if (document.activeElement.tagName !== 'INPUT')
-                video.currentTime -= 15
-            break
-        case 'x': // Advance
-        case 'ArrowRight':
-        case 'ArrowUp':
-            if (document.activeElement.tagName !== 'INPUT')
-                video.currentTime += 15
-            break
-        case 'r': // Reset speed
-            video.playbackRate = video.defaultPlaybackRate
-            break
-        case 'a': // Preferred speed
-            video.playbackRate = 2
-            break
-        case 'm': // Toggle mute
-            toggleMute()
-            break
-        case 'c': // Toggle zoom
-            toggleZoom()
-            break
-        case 'p': // Toggle PiP
-            togglePictureInPicture()
-            break
-        case 'f':
-        case 'Enter':
-            if (document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT')
-                toggleFullScreen()
-    }
+	if (event.shiftKey) {
+		modPressedDuringKeydown = true
+		replayBtn.textContent = 'replay_30'
+		forwardBtn.textContent = 'forward_30'
+	}
+
+	switch (event.key) {
+		case ' ': // Toggle play
+			if (document.activeElement.tagName !== 'BUTTON')
+				togglePlay()
+			break
+		case 's': // Slow down
+		case 'S':
+			addToSpeed(modPressedDuringKeydown ? -1 : -0.1)
+			break
+		case 'd': // Speed up
+		case 'D':
+			addToSpeed(modPressedDuringKeydown ? 1 : 0.1)
+			break
+		case 'z': // Rewind
+		case 'Z':
+		case 'ArrowLeft':
+		case 'ArrowDown':
+			if (document.activeElement.tagName !== 'INPUT')
+				replay()
+			break
+		case 'x': // Advance
+		case 'X':
+		case 'ArrowRight':
+		case 'ArrowUp':
+			if (document.activeElement.tagName !== 'INPUT')
+				forward()
+			break
+		case 'r': // Reset speed
+			video.playbackRate = video.defaultPlaybackRate
+			break
+		case 'a': // Preferred speed
+			video.playbackRate = 2
+			break
+		case 'm': // Toggle mute
+			toggleMute()
+			break
+		case 'c': // Toggle zoom
+			toggleZoom()
+			break
+		case 'p': // Toggle PiP
+			togglePictureInPicture()
+			break
+		case 'f':
+		case 'Enter':
+			if (document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT')
+				toggleFullScreen()
+	}
 })
 
+document.addEventListener('keyup', (event) => {
+	let modPressedDuringKeyup = event.shiftKey
+	if (modPressedDuringKeydown && !modPressedDuringKeyup) {
+		modPressedDuringKeydown = false
+		replayBtn.textContent = 'replay_10'
+		forwardBtn.textContent = 'forward_10'
+	}
+})
+
+function handleDragEnd() {
+	dropOverlay.hidden = true
+	droppableElements.forEach(droppable => {
+		delete droppable.dataset.fileHover
+	})
+}
 
 // AUXILIARY FUNCTIONS
-function clamp(min, value, max) {
-    return Math.min(Math.max(value, min), max)
+function handleFiles(event) {
+	// This could either be a DragEvent or an Event of type 'change'
+	event.preventDefault()
+
+	// If the event is a DragEvent, but the file is not a video, ignore it
+	if (event.dataTransfer && !event.dataTransfer.items[0].type.includes('video')) {
+		handleDragEnd()
+		return
+	}
+
+	const file = (this.files) ? this.files[0] : event.dataTransfer.items[0].getAsFile()
+
+	// If there isn't already a video playing, show the player
+	if (videoObjURL === undefined) {
+		dragPanel.hidden = true
+		player.hidden = false
+	} else {
+		URL.revokeObjectURL(videoObjURL)
+		skipTimeUpdate = true
+	}
+
+	videoObjURL = URL.createObjectURL(file)
+	video.src = videoObjURL
+
+	fileName.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
+	videoId = `Timer for ${file.name}`
+
+	handleDragEnd()
 }
 
 function togglePlay() {
-    video.paused ? video.play() : video.pause()
+	video.paused ? video.play() : video.pause()
 }
 
 function toggleMute() {
-    video.muted = !video.muted
+	video.muted = !video.muted
+}
+
+function clamp(min, value, max) {
+	return Math.min(Math.max(value, min), max)
 }
 
 function addToSpeed(delta) {
-    // Clamp speed between 0.1 and 16 (Chrome range is [0.0625, 16])
-    video.playbackRate = clamp(0.1, (video.playbackRate + delta).toFixed(2), 16)
+	// Clamp speed between 0.1 and 16 (Chrome range is [0.0625, 16])
+	video.playbackRate = clamp(0.1, (video.playbackRate + delta).toFixed(2), 16)
+}
+
+function replay() {
+	video.currentTime -= modPressedDuringKeydown ? 30 : 10
+}
+
+function forward() {
+	video.currentTime += modPressedDuringKeydown ? 30 : 10
 }
 
 function togglePictureInPicture() {
-    if (document.pictureInPictureElement) {
-        document.exitPictureInPicture()
-    } else {
-        video.requestPictureInPicture()
-    }
+	if (document.pictureInPictureElement) {
+		document.exitPictureInPicture()
+	} else {
+		video.requestPictureInPicture()
+	}
 }
 
 function toggleFullScreen() {
-    if (document.fullscreenElement) {
-        document.exitFullscreen()
-    } else {
-        player.requestFullscreen()
-    }
+	if (document.fullscreenElement || document.webkitFullscreenElement) {
+		document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen()
+	} else {
+		player.requestFullscreen ? player.requestFullscreen() : player.webkitRequestFullscreen()
+	}
 }
 
 function toggleZoom() {
-    if (zoomBtn.innerText === 'zoom_out_map') {
-        video.style.objectFit = 'cover'
-        zoomBtn.innerText = 'crop_free'
-    } else {
-        video.style.objectFit = 'contain'
-        zoomBtn.innerText = 'zoom_out_map'
-    }
+	if (zoomBtn.textContent === 'zoom_out_map') {
+		video.style.objectFit = 'cover'
+		zoomBtn.textContent = 'crop_free'
+	} else {
+		video.style.objectFit = 'contain'
+		zoomBtn.textContent = 'zoom_out_map'
+	}
 }
 
 // Convert seconds to time in format (h:)mm:ss
 // Use https://tc39.es/proposal-temporal/docs/duration.html when available
 function secondsToTime(seconds) {
-    let time = new Date(seconds * 1000)
-    let h = time.getUTCHours(),
-        m = time.getUTCMinutes().toString().padStart(2, '0'),
-        s = time.getUTCSeconds().toString().padStart(2, '0')
+	let time = new Date(seconds * 1000)
+	let h = time.getUTCHours(),
+		m = time.getUTCMinutes().toString().padStart(2, '0'),
+		s = time.getUTCSeconds().toString().padStart(2, '0')
 
-    return (h > 0) ? `${h}:${m}:${s}` : `${m}:${s}`
+	return (h > 0) ? `${h}:${m}:${s}` : `${m}:${s}`
 }
 
 // Used for aria-valuetext
 function secondsToTextTime(seconds) {
-    let time = new Date(seconds * 1000)
-    let h = time.getUTCHours(),
-        m = time.getUTCMinutes(),
-        s = time.getUTCSeconds()
+	let time = new Date(seconds * 1000)
+	let h = time.getUTCHours(),
+		m = time.getUTCMinutes(),
+		s = time.getUTCSeconds()
 
-    let hText = `${h} hour${(h === 1) ? '' : 's'} `
-    let mText = `${m} minute${(m === 1) ? '' : 's'} `
-    let sText = `${s} second${(s === 1) ? '' : 's'}`
+	let hText = `${h} hour${(h === 1) ? '' : 's'} `
+	let mText = `${m} minute${(m === 1) ? '' : 's'} `
+	let sText = `${s} second${(s === 1) ? '' : 's'}`
 
-    return `${h ? hText : ''}${m ? mText : ''}${sText}`
+	return `${h ? hText : ''}${m ? mText : ''}${sText}`
 }

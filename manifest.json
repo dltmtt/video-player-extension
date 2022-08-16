@@ -1,11 +1,20 @@
 {
+	// Required
 	"manifest_version": 3,
 	"name": "Player for local videos",
 	"version": "0.2",
-	"author": "Matteo Delton",
-	"description": "Player for local videos with keyboard shortcuts.",
-	"offline_enabled": true,
+
+	// Recommended
 	"action": { },
+	"description": "Player for local videos with keyboard shortcuts",
+	"icons": {
+		"48": "icons/icon48.png",
+		"128": "icons/icon128.png",
+		"192": "icons/favicon.png"
+	},
+
+	// Optional
+	"author": "Matteo Delton",
 	"background": {
 		"service_worker": "js/background.js"
 	},
@@ -16,10 +25,6 @@
 			}
 		}
 	},
-	"icons": [
-		{
-			"src": "favicon.png",
-			"sizes": "192x192"
-		}
-	]
+	"offline_enabled": true,
+	"short_name": "Video player"
 }

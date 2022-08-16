@@ -2,7 +2,7 @@
 	// Required
 	"manifest_version": 3,
 	"name": "Player for local videos",
-	"version": "0.2",
+	"version": "0.2.1",
 
 	// Recommended
 	"action": { },

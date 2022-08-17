@@ -1,10 +1,7 @@
 {
-	// Required
 	"manifest_version": 3,
 	"name": "Player for local videos",
 	"version": "0.2.1",
-
-	// Recommended
 	"action": { },
 	"description": "Player for local videos with keyboard shortcuts",
 	"icons": {
@@ -12,8 +9,6 @@
 		"128": "icons/icon128.png",
 		"192": "icons/favicon.png"
 	},
-
-	// Optional
 	"author": "Matteo Delton",
 	"background": {
 		"service_worker": "js/background.js"

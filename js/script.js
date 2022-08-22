@@ -98,7 +98,7 @@ video.addEventListener('timeupdate', function () {
 	// Update video bar position
 	videoBar.value = this.currentTime
 	videoBar.ariaValueText = secondsToTextTime(this.currentTime)
-	videoBar.style.setProperty("--progress", (videoBar.value * 100 / video.duration) + "%")
+	videoBar.style.setProperty("--progress", (videoBar.valueAsNumber * 100 / video.duration) + "%")
 
 	// Save time in local storage
 	localStorage.setItem(videoId, this.currentTime)
@@ -111,7 +111,7 @@ video.addEventListener('timeupdate', function () {
 
 // Seek to the point clicked on the progress bar
 videoBar.addEventListener('input', function () {
-	videoBar.style.setProperty("--progress", (this.value * 100 / video.duration) + "%")
+	videoBar.style.setProperty("--progress", (this.valueAsNumber * 100 / video.duration) + "%")
 
 	video.currentTime = this.value
 

@@ -1,0 +1,58 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+button {
+	border: none;
+	user-select: none;
+	cursor: pointer;
+
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	background: transparent;
+}
+
+input {
+	font-family: inherit;
+
+	&[type="number"] {
+		border: none;
+		color: inherit;
+		font-size: inherit;
+	}
+
+	&[type="range"] {
+		&::-webkit-slider-runnable-track {
+			cursor: pointer;
+		}
+
+		&::-webkit-slider-thumb {
+			cursor: grab;
+
+			&:active {
+				cursor: grabbing;
+			}
+		}
+	}
+
+	&[type="number"] {
+		cursor: text;
+
+		&::-webkit-inner-spin-button {
+			cursor: pointer;
+		}
+	}
+
+	&[type="file"]::file-selector-button {
+		border: none;
+		border-radius: inherit;
+		font-family: inherit;
+	}
+}

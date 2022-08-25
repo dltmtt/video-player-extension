@@ -173,6 +173,9 @@ document.addEventListener('keydown', (event) => {
 		case 'r': // Reset speed
 			video.playbackRate = video.defaultPlaybackRate
 			break
+		case 't': // Toggle time indicator
+			toggleTimeIndicator()
+			break
 		case 'a': // Preferred speed
 			video.playbackRate = 2
 			break
@@ -288,6 +291,10 @@ function toggleZoom() {
 		video.style.objectFit = 'contain'
 		zoomBtn.textContent = 'zoom_out_map'
 	}
+}
+
+function toggleTimeIndicator() {
+	[currentTime.hidden, timeRemaining.hidden] = [timeRemaining.hidden, currentTime.hidden]
 }
 
 // Convert seconds to time in format (h:)mm:ss

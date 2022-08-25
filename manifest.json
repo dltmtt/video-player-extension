@@ -7,7 +7,7 @@
 	"icons": {
 		"48": "icons/icon48.png",
 		"128": "icons/icon128.png",
-		"192": "icons/favicon.png"
+		"192": "favicon.png"
 	},
 	"author": "Matteo Delton",
 	"background": {

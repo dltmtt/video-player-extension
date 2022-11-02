@@ -17,7 +17,7 @@
 
 <div class="droppable" id="drag-panel">
 	<span id="drag-panel-text">Drag and drop the video</span>
-	<input type="file" id="file-input" accept="video/*">
+	<button type="button" id="file-picker">Choose file</button>
 </div>
 <div id="drop-overlay" hidden></div>
 
@@ -28,8 +28,8 @@
 		<input type="range" aria-label="Video progress bar" value="0" step="any" tabindex="-1" id="video-bar">
 
 		<button type="button" aria-label="Toggle play/pause" class="material-icons play-btn">play_arrow</button>
-		<button type="button" aria-label="Replay 10 s" class="material-icons replay-btn">replay_10</button>
-		<button type="button" aria-label="Forward 10 s" class="material-icons forward-btn">forward_10</button>
+		<button type="button" aria-label="Rewind 10 seconds" class="material-icons replay-btn">replay_10</button>
+		<button type="button" aria-label="Forward 10 seconds" class="material-icons forward-btn">forward_10</button>
 
 		<button type="button" aria-label="Toggle time elapsed/time remaining" id="time-indicator">
 			<time role="timer" class="current-time">00:00</time>
@@ -40,7 +40,7 @@
 			<span id="file-name"></span>
 		</div>
 
-		<input type="number" aria-label="Speed controls" value="1.00" min="0.1" max="16" step="0.1" id="speed-controls">
+		<input type="number" aria-label="Speed controls" value="1" min="0.1" max="16" step="0.1" id="speed-controls">
 		<button type="button" aria-label="Toggle zoom" class="material-icons zoom-btn">zoom_out_map</button>
 		<button type="button" aria-label="Toggle fullscreen" class="material-icons fullscreen-btn">fullscreen</button>
 	</div>

@@ -52,33 +52,31 @@ body {
 	}
 }
 
-input[type="file"] {
+#file-picker {
 	max-inline-size: 20em;
 
 	font-size: .5em;
 	padding: .5em;
 	border-radius: .5em;
 
-	&::file-selector-button {
-		color: var(--text2);
-		background: var(--surface2);
-		box-shadow: 0 0 .5em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
+	color: var(--text2);
+	background: var(--surface2);
+	box-shadow: 0 0 .5em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
 
-		--spacing: .75em;
-		padding-block: calc(var(--spacing) * .618);
-		padding-inline: var(--spacing);
-		margin-inline-end: var(--spacing);
+	--spacing: .75em;
+	padding-block: calc(var(--spacing) * .618);
+	padding-inline: var(--spacing);
+	margin-inline-end: var(--spacing);
 
-		transition-duration: var(--duration);
-		transition-property: background-color, box-shadow;
+	transition-duration: var(--duration);
+	transition-property: background-color, box-shadow;
 
-		&:hover {
-			background-color: var(--surface1);
-		}
+	&:hover {
+		background-color: var(--surface1);
+	}
 
-		&:active {
-			box-shadow: none;
-		}
+	&:active {
+		box-shadow: none;
 	}
 }
 
@@ -239,7 +237,7 @@ input[type="range"]::-webkit-slider-thumb {
 	}
 
 	&:is(:hover, :focus-visible) {
-		inline-size: 6em;
+		inline-size: 5em;
 
 		&::-webkit-inner-spin-button {
 			opacity: 1;

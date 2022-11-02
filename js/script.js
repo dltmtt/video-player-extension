@@ -1,37 +1,97 @@
 'use strict'
 
-var modPressedDuringKeydown = false
 
-// DRAG 'N' DROP
+
+// VIDEO SELECTION
+// ---------------
+
+// DRAG AND DROP
 const dragPanel = document.querySelector('#drag-panel')
 const dropOverlay = document.querySelector('#drop-overlay')
 const droppableElements = document.querySelectorAll('.droppable')
 const fileName = document.querySelector('#file-name')
 const video = document.querySelector('video')
-var videoObjURL
-var videoId
+var localStorageKey
 
-// I should be able to check if the file is a video (with event.dataTransfer.items) here, but it doesn't seem to work with Safari
 droppableElements.forEach(droppable => {
-	droppable.addEventListener('dragenter', function () {
-		this.dataset.fileHover = true
-		dropOverlay.hidden = false
+	droppable.addEventListener('dragenter', function (e) {
+		if (e.dataTransfer.items[0].type.startsWith('video/')) {
+			this.dataset.fileHover = true
+			dropOverlay.hidden = false
+		}
 	})
+})
+
+dropOverlay.addEventListener('dragover', function (e) {
+	e.preventDefault()
+})
+
+dropOverlay.addEventListener('drop', async (e) => {
+	e.preventDefault()
+
+	// The type check is done in dragenter and in manageFileHandle
+	const fileHandle = await e.dataTransfer.items[0].getAsFileSystemHandle()
+
+	manageFileHandle(fileHandle)
+	handleDragEnd()
 })
 
 dropOverlay.addEventListener('dragleave', handleDragEnd)
 
-dropOverlay.addEventListener('dragover', function (event) {
-	event.preventDefault()
-})
-
-dropOverlay.addEventListener('drop', handleFiles)
+function handleDragEnd() {
+	dropOverlay.hidden = true
+	droppableElements.forEach(droppable => {
+		delete droppable.dataset.fileHover
+	})
+}
 
 
 // FILE INPUT
-const fileInput = document.querySelector('#file-input')
-fileInput.addEventListener('change', handleFiles)
+const filePicker = document.querySelector('#file-picker')
+filePicker.addEventListener('click', async () => {
+	try {
+		const [fileHandle] = await window.showOpenFilePicker({
+			excludeAcceptAllOption: true,
+			types: [
+				{
+					description: 'Videos',
+					accept: {
+						'video/*': ['.avi', '.mp4', '.mpeg', '.ogv', '.ts', '.webm', '.3gp', '.3g2']
+					}
+				}
+			],
+			multiple: false
+		})
 
+		manageFileHandle(fileHandle)
+	} catch (abortError) { }
+})
+
+async function manageFileHandle(fileHandle) {
+	const file = await fileHandle.getFile()
+
+	if (!file.type.startsWith('video/'))
+		return
+
+	if (video.src) {
+		localStorage.setItem(localStorageKey, video.currentTime)
+		URL.revokeObjectURL(video.src)
+	} else { // Show the player
+		dragPanel.hidden = true
+		player.hidden = false
+	}
+
+	video.src = URL.createObjectURL(file)
+
+	// Remove the file extension
+	fileName.textContent = file.name.replace(/\.[^.]+$/, '')
+	localStorageKey = `Timer for ${file.name}`
+}
+
+
+
+// CONTROL PLAYBACK
+// ----------------
 
 // NAVIGATION
 const player = document.querySelector('.player')
@@ -48,18 +108,17 @@ video.onplay = () => { playBtn.textContent = 'pause' }
 
 // Fullscreen
 fullscreenBtn.onclick = toggleFullScreen
-document.onfullscreenchange = document.onwebkitfullscreenchange = function () {
-	if (document.fullscreenElement || document.webkitFullscreenElement)
-		fullscreenBtn.textContent = 'fullscreen_exit'
-	else
-		fullscreenBtn.textContent = 'fullscreen'
+document.onfullscreenchange = function () {
+	fullscreenBtn.textContent = (document.fullscreenElement) ?
+		'fullscreen_exit' :
+		'fullscreen'
 }
 
 video.addEventListener('dblclick', toggleFullScreen)
 
 // Speed
 video.onratechange = function () {
-	speedControls.value = this.playbackRate.toFixed(2)
+	speedControls.value = this.playbackRate
 }
 
 speedControls.onchange = function () {
@@ -78,35 +137,34 @@ const timeRemaining = document.querySelector('.time-remaining')
 const replayBtn = document.querySelector('.replay-btn')
 const forwardBtn = document.querySelector('.forward-btn')
 const duration = document.querySelector('.duration')
-var skipTimeUpdate
+var metadataAvailable = true // Used to prevent the time indicator from updating when the metadata is not loaded
 
 video.addEventListener('loadedmetadata', function () {
-	skipTimeUpdate = false
+	metadataAvailable = true
 
 	// Restore video position from local storage
-	this.currentTime = localStorage.getItem(videoId)
+	this.currentTime = localStorage.getItem(localStorageKey)
 
 	timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
 	duration.textContent = secondsToTime(this.duration)
+
 	videoBar.setAttribute('max', this.duration)
 })
 
+video.addEventListener('emptied', function () {
+	metadataAvailable = false
+})
+
 video.addEventListener('timeupdate', function () {
-	if (skipTimeUpdate)
+	if (!metadataAvailable)
 		return
 
 	// Update video bar position
 	videoBar.value = this.currentTime
-	videoBar.ariaValueText = secondsToTextTime(this.currentTime)
 	videoBar.style.setProperty("--progress", (videoBar.valueAsNumber * 100 / video.duration) + "%")
 
-	// Save time in local storage
-	localStorage.setItem(videoId, this.currentTime)
-
 	// Update time indicator
-	currentTime.textContent = secondsToTime(this.currentTime)
-	timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
-
+	updateTimeIndicator()
 })
 
 // Seek to the point clicked on the progress bar
@@ -115,10 +173,14 @@ videoBar.addEventListener('input', function () {
 
 	video.currentTime = this.value
 
-	// Needed to show real-time the time corresponding to the progress bar
+	// Needed to show live the time when the progress bar is dragged
+	updateTimeIndicator()
+})
+
+function updateTimeIndicator() {
 	currentTime.textContent = secondsToTime(video.currentTime)
 	timeRemaining.textContent = `-${secondsToTime(video.duration - video.currentTime)}`
-})
+}
 
 // videoBar also has tabindex="-1"
 videoBar.onfocus = function () { this.blur() }
@@ -131,44 +193,53 @@ timeIndicator.addEventListener('click', function () {
 	[timeRemaining.hidden, currentTime.hidden] = [currentTime.hidden, timeRemaining.hidden]
 })
 
+// Save time in local storage when the window is closed
+window.onbeforeunload = () => {
+	localStorage.setItem(localStorageKey, video.currentTime)
+}
+
 // Delete video position from local storage
-video.onended = () => { localStorage.removeItem(videoId) }
+video.onended = () => {
+	localStorage.removeItem(localStorageKey)
+}
 
 
 // KEYBOARD SHORTCUTS
-document.addEventListener('keydown', (event) => {
-	if (event.shiftKey) {
-		modPressedDuringKeydown = true
+document.addEventListener('keydown', (e) => {
+	var modifier = e.shiftKey
+	if (modifier) {
 		replayBtn.textContent = 'replay_30'
 		forwardBtn.textContent = 'forward_30'
 	}
 
-	switch (event.key) {
+	switch (e.key) {
 		case ' ': // Toggle play
-			if (document.activeElement.tagName !== 'BUTTON')
-				togglePlay()
+			if (document.activeElement.tagName == 'BUTTON')
+				break
+		case 'k':
+			togglePlay()
 			break
 		case 's': // Slow down
 		case 'S':
-			addToSpeed(modPressedDuringKeydown ? -1 : -0.1)
+			addToSpeed(modifier ? -1 : -0.1)
 			break
 		case 'd': // Speed up
 		case 'D':
-			addToSpeed(modPressedDuringKeydown ? 1 : 0.1)
+			addToSpeed(modifier ? 1 : 0.1)
 			break
 		case 'z': // Rewind
 		case 'Z':
 		case 'ArrowLeft':
 		case 'ArrowDown':
 			if (document.activeElement.tagName !== 'INPUT')
-				replay()
+				replay(modifier)
 			break
 		case 'x': // Advance
 		case 'X':
 		case 'ArrowRight':
 		case 'ArrowUp':
 			if (document.activeElement.tagName !== 'INPUT')
-				forward()
+				forward(modifier)
 			break
 		case 'r': // Reset speed
 			video.playbackRate = video.defaultPlaybackRate
@@ -195,52 +266,13 @@ document.addEventListener('keydown', (event) => {
 	}
 })
 
-document.addEventListener('keyup', (event) => {
-	let modPressedDuringKeyup = event.shiftKey
-	if (modPressedDuringKeydown && !modPressedDuringKeyup) {
-		modPressedDuringKeydown = false
+document.addEventListener('keyup', (e) => {
+	var modifier = e.shiftKey
+	if (!modifier) {
 		replayBtn.textContent = 'replay_10'
 		forwardBtn.textContent = 'forward_10'
 	}
 })
-
-function handleDragEnd() {
-	dropOverlay.hidden = true
-	droppableElements.forEach(droppable => {
-		delete droppable.dataset.fileHover
-	})
-}
-
-// AUXILIARY FUNCTIONS
-function handleFiles(event) {
-	// This could either be a DragEvent or an Event of type 'change'
-	event.preventDefault()
-
-	// If the event is a DragEvent, but the file is not a video, ignore it
-	if (event.dataTransfer && !event.dataTransfer.items[0].type.includes('video')) {
-		handleDragEnd()
-		return
-	}
-
-	const file = (this.files) ? this.files[0] : event.dataTransfer.items[0].getAsFile()
-
-	// If there isn't already a video playing, show the player
-	if (videoObjURL === undefined) {
-		dragPanel.hidden = true
-		player.hidden = false
-	} else {
-		URL.revokeObjectURL(videoObjURL)
-		skipTimeUpdate = true
-	}
-
-	videoObjURL = URL.createObjectURL(file)
-	video.src = videoObjURL
-
-	fileName.textContent = file.name.substring(0, file.name.lastIndexOf('.')) || file.name
-	videoId = `Timer for ${file.name}`
-
-	handleDragEnd()
-}
 
 function togglePlay() {
 	video.paused ? video.play() : video.pause()
@@ -259,28 +291,24 @@ function addToSpeed(delta) {
 	video.playbackRate = clamp(0.1, (video.playbackRate + delta).toFixed(2), 16)
 }
 
-function replay() {
-	video.currentTime -= modPressedDuringKeydown ? 30 : 10
+function replay(modifier) {
+	video.currentTime -= modifier ? 30 : 10
 }
 
-function forward() {
-	video.currentTime += modPressedDuringKeydown ? 30 : 10
+function forward(modifier) {
+	video.currentTime += modifier ? 30 : 10
 }
 
 function togglePictureInPicture() {
-	if (document.pictureInPictureElement) {
-		document.exitPictureInPicture()
-	} else {
+	(document.pictureInPictureElement) ?
+		document.exitPictureInPicture() :
 		video.requestPictureInPicture()
-	}
 }
 
 function toggleFullScreen() {
-	if (document.fullscreenElement || document.webkitFullscreenElement) {
-		document.exitFullscreen ? document.exitFullscreen() : document.webkitExitFullscreen()
-	} else {
-		player.requestFullscreen ? player.requestFullscreen() : player.webkitRequestFullscreen()
-	}
+	(document.fullscreenElement) ?
+		document.exitFullscreen() :
+		player.requestFullscreen()
 }
 
 function toggleZoom() {
@@ -300,24 +328,5 @@ function toggleTimeIndicator() {
 // Convert seconds to time in format (h:)mm:ss
 // Use https://tc39.es/proposal-temporal/docs/duration.html when available
 function secondsToTime(seconds) {
-	let time = new Date(seconds * 1000)
-	let h = time.getUTCHours(),
-		m = time.getUTCMinutes().toString().padStart(2, '0'),
-		s = time.getUTCSeconds().toString().padStart(2, '0')
-
-	return (h > 0) ? `${h}:${m}:${s}` : `${m}:${s}`
-}
-
-// Used for aria-valuetext
-function secondsToTextTime(seconds) {
-	let time = new Date(seconds * 1000)
-	let h = time.getUTCHours(),
-		m = time.getUTCMinutes(),
-		s = time.getUTCSeconds()
-
-	let hText = `${h} hour${(h === 1) ? '' : 's'} `
-	let mText = `${m} minute${(m === 1) ? '' : 's'} `
-	let sText = `${s} second${(s === 1) ? '' : 's'}`
-
-	return `${h ? hText : ''}${m ? mText : ''}${sText}`
+	return new Date(seconds * 1000).toISOString().substring((seconds >= 3600) ? 12 : 14, 19)
 }

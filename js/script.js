@@ -118,11 +118,18 @@ video.addEventListener('dblclick', toggleFullScreen)
 
 // Speed
 video.onratechange = function () {
-	speedControls.value = this.playbackRate
+	speedControls.value = this.playbackRate.toFixed(2)
 }
 
 speedControls.onchange = function () {
+	// Caused by keyboard shortcuts
+	this.value = parseFloat(this.value).toFixed(2)
 	video.playbackRate = clamp(0.1, this.value, 16)
+}
+
+speedControls.oninput = function () {
+	// Caused by keyboard input
+	this.value = parseFloat(this.value).toFixed(2)
 }
 
 // Zoom
@@ -212,6 +219,10 @@ document.addEventListener('keydown', (e) => {
 		forwardBtn.textContent = 'forward_30'
 	}
 
+	if (e.key !== ' ') {
+		document.activeElement.blur()
+	}
+
 	switch (e.key) {
 		case ' ': // Toggle play
 			if (document.activeElement.tagName == 'BUTTON')
@@ -221,11 +232,13 @@ document.addEventListener('keydown', (e) => {
 			break
 		case 's': // Slow down
 		case 'S':
-			addToSpeed(modifier ? -1 : -0.1)
+			speedControls.stepDown(modifier ? 10 : 1)
+			speedControls.dispatchEvent(new Event('change'))
 			break
 		case 'd': // Speed up
 		case 'D':
-			addToSpeed(modifier ? 1 : 0.1)
+			speedControls.stepUp(modifier ? 10 : 1)
+			speedControls.dispatchEvent(new Event('change'))
 			break
 		case 'z': // Rewind
 		case 'Z':
@@ -284,11 +297,6 @@ function toggleMute() {
 
 function clamp(min, value, max) {
 	return Math.min(Math.max(value, min), max)
-}
-
-function addToSpeed(delta) {
-	// Clamp speed between 0.1 and 16 (Chrome range is [0.0625, 16])
-	video.playbackRate = clamp(0.1, (video.playbackRate + delta).toFixed(2), 16)
 }
 
 function replay(modifier) {

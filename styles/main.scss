@@ -221,7 +221,9 @@ input[type="range"]::-webkit-slider-thumb {
 	border: thin solid var(--surface4);
 	border-radius: 1.25rem;
 
-	inline-size: 5em;
+	--text-size: 5em;
+	--buttons-size: 1em;
+	inline-size: var(--text-size);
 	padding-inline: var(--spacing);
 	box-shadow: inset 0 0 .25em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
 
@@ -233,11 +235,11 @@ input[type="range"]::-webkit-slider-thumb {
 		transition-property: margin, opacity;
 
 		opacity: 0;
-		margin-inline-start: -1em;
+		margin-inline-start: calc(-1 * var(--buttons-size));
 	}
 
 	&:is(:hover, :focus-visible) {
-		inline-size: 5em;
+		inline-size: calc(var(--text-size) + var(--buttons-size));
 
 		&::-webkit-inner-spin-button {
 			opacity: 1;

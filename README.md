@@ -26,7 +26,7 @@ To toggle between time elapsed and time remaining, click on the video duration.
 The following keyboard shortcuts are supported:
 | Key | Action |
 |:---:|---|
-| `Space` | Toggle play/pause |
+| `Space`<br>`k` | Toggle play/pause |
 | `S` | Slow down by 0.1× |
 | `D` | Speed up by 0.1× |
 | `Z`<br>`Left arrow`<br>`Down arrow` | Rewind 15 seconds |

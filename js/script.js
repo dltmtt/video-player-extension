@@ -74,20 +74,37 @@ async function manageFileHandle(fileHandle) {
 		return
 
 	if (video.src) {
+		// Another video was playing
 		localStorage.setItem(localStorageKey, video.currentTime)
 		URL.revokeObjectURL(video.src)
-	} else { // Show the player
+	} else {
+		// No video was playing, show the player
 		dragPanel.hidden = true
 		player.hidden = false
 	}
 
+	// Don't change the order of these lines!
+	localStorageKey = await hashFile(file)
 	video.src = URL.createObjectURL(file)
 
 	// Remove the file extension
 	fileName.textContent = file.name.replace(/\.[^.]+$/, '')
-	localStorageKey = `Timer for ${file.name}`
 }
 
+async function hashFile(file) {
+	// Get byte array of file
+	const arrayBuffer = await file.arrayBuffer();
+
+	// Hash the byte array
+	const hashAsArrayBuffer = await crypto.subtle.digest('SHA-1', arrayBuffer);
+
+	// Get the hex value of each byte and store it in an array
+	const uint8ViewOfHash = new Uint8Array(hashAsArrayBuffer);
+
+	// Convert each byte to a hex string
+	const hashAsString = Array.from(uint8ViewOfHash).map((b) => b.toString(16).padStart(2, '0')).join('');
+	return hashAsString;
+}
 
 
 // CONTROL PLAYBACK
@@ -147,46 +164,53 @@ const duration = document.querySelector('.duration')
 var metadataAvailable = true // Used to prevent the time indicator from updating when the metadata is not loaded
 
 video.addEventListener('loadedmetadata', function () {
+	console.log('Metadata loaded')
 	metadataAvailable = true
 
 	// Restore video position from local storage
 	this.currentTime = localStorage.getItem(localStorageKey)
 
-	timeRemaining.textContent = `-${secondsToTime(this.duration - this.currentTime)}`
-	duration.textContent = secondsToTime(this.duration)
+	updateVideoBar()
+	updateTimeIndicators()
 
+	duration.textContent = secondsToTime(this.duration)
 	videoBar.setAttribute('max', this.duration)
 })
 
 video.addEventListener('emptied', function () {
 	metadataAvailable = false
+
+	// Needed when another video is loaded while the current one is playing
+	playBtn.textContent = 'play_arrow'
 })
 
 video.addEventListener('timeupdate', function () {
 	if (!metadataAvailable)
 		return
 
-	// Update video bar position
-	videoBar.value = this.currentTime
-	videoBar.style.setProperty("--progress", (videoBar.valueAsNumber * 100 / video.duration) + "%")
-
-	// Update time indicator
-	updateTimeIndicator()
+	updateVideoBar()
+	updateTimeIndicators()
 })
 
 // Seek to the point clicked on the progress bar
 videoBar.addEventListener('input', function () {
+	console.log('Input event on videoBar')
 	videoBar.style.setProperty("--progress", (this.valueAsNumber * 100 / video.duration) + "%")
 
 	video.currentTime = this.value
 
 	// Needed to show live the time when the progress bar is dragged
-	updateTimeIndicator()
+	updateTimeIndicators()
 })
 
-function updateTimeIndicator() {
+function updateTimeIndicators() {
 	currentTime.textContent = secondsToTime(video.currentTime)
 	timeRemaining.textContent = `-${secondsToTime(video.duration - video.currentTime)}`
+}
+
+function updateVideoBar() {
+	videoBar.value = video.currentTime
+	videoBar.style.setProperty("--progress", (videoBar.valueAsNumber * 100 / video.duration) + "%")
 }
 
 // videoBar also has tabindex="-1"

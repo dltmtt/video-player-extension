@@ -169,11 +169,11 @@ video.addEventListener('loadedmetadata', function () {
 	// Restore video position from local storage
 	this.currentTime = localStorage.getItem(localStorageKey)
 
-	updateVideoBar()
 	updateTimeIndicators()
-
 	duration.textContent = secondsToTime(this.duration)
+
 	videoBar.setAttribute('max', this.duration)
+	updateVideoBar()
 })
 
 video.addEventListener('emptied', function () {

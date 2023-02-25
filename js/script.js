@@ -1,7 +1,5 @@
 'use strict'
 
-
-
 // VIDEO SELECTION
 // ---------------
 
@@ -74,11 +72,11 @@ async function manageFileHandle(fileHandle) {
 		return
 
 	if (video.src) {
-		// Another video was playing
-		localStorage.setItem(localStorageKey, video.currentTime)
+		console.log('A video change was detected. Saving the old video state in local storage…')
+		updateLocalStorage()
 		URL.revokeObjectURL(video.src)
 	} else {
-		// No video was playing, show the player
+		console.log('Showing the player…')
 		dragPanel.hidden = true
 		player.hidden = false
 	}
@@ -96,9 +94,9 @@ async function manageFileHandle(fileHandle) {
 	})
 
 	const actionHandlers = [
-		['seekbackward', () => replay()],
-		['seekforward', () => forward()]
-	];
+		['seekbackward', replay],
+		['seekforward', forward]
+	]
 
 	for (const [action, handler] of actionHandlers) {
 		navigator.mediaSession.setActionHandler(action, handler)
@@ -180,8 +178,12 @@ var metadataAvailable = true // Used to prevent the time indicator from updating
 video.addEventListener('loadedmetadata', function () {
 	metadataAvailable = true
 
-	// Restore video position from local storage
-	this.currentTime = localStorage.getItem(localStorageKey)
+	if (localStorage.getItem(localStorageKey)) {
+		console.log('Video state found in local storage. Restoring…')
+		restoreFromLocalStorage()
+	} else {
+		console.log('No video state found in local storage.')
+	}
 
 	updateTimeIndicators()
 	duration.textContent = secondsToTime(this.duration)
@@ -238,13 +240,15 @@ timeIndicator.addEventListener('click', function () {
 
 // Save time in local storage when the window is closed
 window.onbeforeunload = () => {
-	if (video.src)
-		localStorage.setItem(localStorageKey, video.currentTime)
+	if (video.src && !video.ended) {
+		updateLocalStorage()
+	}
 }
 
-// Delete video position from local storage
+// Delete video state from local storage
 video.onended = () => {
 	localStorage.removeItem(localStorageKey)
+	console.log('Video ended. Video state deleted from local storage.')
 }
 
 
@@ -360,4 +364,24 @@ function toggleTimeIndicator() {
 // Use https://tc39.es/proposal-temporal/docs/duration.html when available
 function secondsToTime(seconds) {
 	return new Date(seconds * 1000).toISOString().substring((seconds >= 3600) ? 12 : 14, 19)
+}
+
+
+// UTILITIES
+// ---------
+
+function updateLocalStorage() {
+	let data = {
+		timer: video.currentTime,
+		playbackRate: video.playbackRate
+	}
+	localStorage.setItem(localStorageKey, JSON.stringify(data))
+	console.log('Video state saved in local storage.')
+}
+
+function restoreFromLocalStorage() {
+	let data = JSON.parse(localStorage.getItem(localStorageKey))
+	video.currentTime = data.timer
+	video.playbackRate = data.playbackRate
+	console.log('Video state restored from local storage.')
 }

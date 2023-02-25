@@ -88,8 +88,8 @@ async function manageFileHandle(fileHandle) {
 	// Remove the file extension
 	fileName.textContent = file.name.replace(/\.[^.]+$/, '')
 
-	// Update the media session
-	video.addEventListener('play', function () {
+	// Update the media session on first play
+	video.addEventListener('seeked', function () {
 		console.log('Setting title and artwork…')
 		const artwork = capture()
 		navigator.mediaSession.metadata = new MediaMetadata({

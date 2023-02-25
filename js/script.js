@@ -164,7 +164,6 @@ const duration = document.querySelector('.duration')
 var metadataAvailable = true // Used to prevent the time indicator from updating when the metadata is not loaded
 
 video.addEventListener('loadedmetadata', function () {
-	console.log('Metadata loaded')
 	metadataAvailable = true
 
 	// Restore video position from local storage
@@ -194,7 +193,6 @@ video.addEventListener('timeupdate', function () {
 
 // Seek to the point clicked on the progress bar
 videoBar.addEventListener('input', function () {
-	console.log('Input event on videoBar')
 	videoBar.style.setProperty("--progress", (this.valueAsNumber * 100 / video.duration) + "%")
 
 	video.currentTime = this.value
@@ -226,7 +224,8 @@ timeIndicator.addEventListener('click', function () {
 
 // Save time in local storage when the window is closed
 window.onbeforeunload = () => {
-	localStorage.setItem(localStorageKey, video.currentTime)
+	if (video.src)
+		localStorage.setItem(localStorageKey, video.currentTime)
 }
 
 // Delete video position from local storage

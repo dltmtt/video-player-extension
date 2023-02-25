@@ -89,10 +89,18 @@ async function manageFileHandle(fileHandle) {
 	fileName.textContent = file.name.replace(/\.[^.]+$/, '')
 
 	// Update the media session
-	navigator.mediaSession.metadata = new MediaMetadata({
-		title: fileName.textContent
-	})
+	video.addEventListener('play', function () {
+		console.log('Setting title and artwork…')
+		const artwork = capture()
+		navigator.mediaSession.metadata = new MediaMetadata({
+			title: fileName.textContent,
+			artwork: [
+				{ src: artwork, sizes: '512x512', type: 'image/png' }
+			]
+		})
+	}, { once: true })
 
+	// Bind the global media controls to the video
 	const actionHandlers = [
 		['seekbackward', replay],
 		['seekforward', forward]
@@ -101,21 +109,6 @@ async function manageFileHandle(fileHandle) {
 	for (const [action, handler] of actionHandlers) {
 		navigator.mediaSession.setActionHandler(action, handler)
 	}
-}
-
-async function hashFile(file) {
-	// Get byte array of file
-	const arrayBuffer = await file.arrayBuffer();
-
-	// Hash the byte array
-	const hashAsArrayBuffer = await crypto.subtle.digest('SHA-1', arrayBuffer);
-
-	// Get the hex value of each byte and store it in an array
-	const uint8ViewOfHash = new Uint8Array(hashAsArrayBuffer);
-
-	// Convert each byte to a hex string
-	const hashAsString = Array.from(uint8ViewOfHash).map((b) => b.toString(16).padStart(2, '0')).join('');
-	return hashAsString;
 }
 
 
@@ -370,6 +363,21 @@ function secondsToTime(seconds) {
 // UTILITIES
 // ---------
 
+async function hashFile(file) {
+	// Get byte array of file
+	const arrayBuffer = await file.arrayBuffer();
+
+	// Hash the byte array
+	const hashAsArrayBuffer = await crypto.subtle.digest('SHA-1', arrayBuffer);
+
+	// Get the hex value of each byte and store it in an array
+	const uint8ViewOfHash = new Uint8Array(hashAsArrayBuffer);
+
+	// Convert each byte to a hex string
+	const hashAsString = Array.from(uint8ViewOfHash).map((b) => b.toString(16).padStart(2, '0')).join('');
+	return hashAsString;
+}
+
 function updateLocalStorage() {
 	let data = {
 		timer: video.currentTime,
@@ -384,4 +392,20 @@ function restoreFromLocalStorage() {
 	video.currentTime = data.timer
 	video.playbackRate = data.playbackRate
 	console.log('Video state restored from local storage.')
+}
+
+function capture() {
+	const canvas = document.createElement('canvas')
+	canvas.width = canvas.height = 512
+
+	const scale = Math.min(canvas.width / video.videoWidth, canvas.height / video.videoHeight)
+	const x = (canvas.width / 2) - (video.videoWidth / 2) * scale
+	const y = (canvas.height / 2) - (video.videoHeight / 2) * scale
+
+	const ctx = canvas.getContext('2d')
+	ctx.drawImage(video, x, y, video.videoWidth * scale, video.videoHeight * scale)
+
+	const dataURL = canvas.toDataURL()
+
+	return dataURL
 }

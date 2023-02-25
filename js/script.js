@@ -89,6 +89,20 @@ async function manageFileHandle(fileHandle) {
 
 	// Remove the file extension
 	fileName.textContent = file.name.replace(/\.[^.]+$/, '')
+
+	// Update the media session
+	navigator.mediaSession.metadata = new MediaMetadata({
+		title: fileName.textContent
+	})
+
+	const actionHandlers = [
+		['seekbackward', () => replay()],
+		['seekforward', () => forward()]
+	];
+
+	for (const [action, handler] of actionHandlers) {
+		navigator.mediaSession.setActionHandler(action, handler)
+	}
 }
 
 async function hashFile(file) {
@@ -236,12 +250,6 @@ video.onended = () => {
 
 // KEYBOARD SHORTCUTS
 document.addEventListener('keydown', (e) => {
-	var modifier = e.shiftKey
-	if (modifier) {
-		replayBtn.textContent = 'replay_30'
-		forwardBtn.textContent = 'forward_30'
-	}
-
 	if (e.key !== ' ') {
 		document.activeElement.blur()
 	}
@@ -255,12 +263,12 @@ document.addEventListener('keydown', (e) => {
 			break
 		case 's': // Slow down
 		case 'S':
-			speedControls.stepDown(modifier ? 10 : 1)
+			speedControls.stepDown()
 			speedControls.dispatchEvent(new Event('change'))
 			break
 		case 'd': // Speed up
 		case 'D':
-			speedControls.stepUp(modifier ? 10 : 1)
+			speedControls.stepUp()
 			speedControls.dispatchEvent(new Event('change'))
 			break
 		case 'z': // Rewind
@@ -268,14 +276,14 @@ document.addEventListener('keydown', (e) => {
 		case 'ArrowLeft':
 		case 'ArrowDown':
 			if (document.activeElement.tagName !== 'INPUT')
-				replay(modifier)
+				replay()
 			break
 		case 'x': // Advance
 		case 'X':
 		case 'ArrowRight':
 		case 'ArrowUp':
 			if (document.activeElement.tagName !== 'INPUT')
-				forward(modifier)
+				forward()
 			break
 		case 'r': // Reset speed
 			video.playbackRate = video.defaultPlaybackRate
@@ -302,14 +310,6 @@ document.addEventListener('keydown', (e) => {
 	}
 })
 
-document.addEventListener('keyup', (e) => {
-	var modifier = e.shiftKey
-	if (!modifier) {
-		replayBtn.textContent = 'replay_10'
-		forwardBtn.textContent = 'forward_10'
-	}
-})
-
 function togglePlay() {
 	video.paused ? video.play() : video.pause()
 }
@@ -322,12 +322,12 @@ function clamp(min, value, max) {
 	return Math.min(Math.max(value, min), max)
 }
 
-function replay(modifier) {
-	video.currentTime -= modifier ? 30 : 10
+function replay() {
+	video.currentTime = Math.max(video.currentTime - 10, 0);
 }
 
-function forward(modifier) {
-	video.currentTime += modifier ? 30 : 10
+function forward() {
+	video.currentTime = Math.min(video.currentTime + 10, video.duration);
 }
 
 function togglePictureInPicture() {

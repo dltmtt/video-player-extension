@@ -8,7 +8,6 @@
 
 <title>Player for local videos</title>
 
-<!-- https://img.icons8.com/fluency/192/video.png -->
 <link rel="icon" href="favicon.png">
 <link rel="stylesheet" href="styles/main.css">
 <link rel="manifest" href="app.webmanifest">
@@ -16,7 +15,7 @@
 <script src="js/script.js" defer></script>
 
 <div class="droppable" id="drag-panel">
-	<span id="drag-panel-text">Drag and drop the video</span>
+	<span id="drag-panel-text">Drag and drop a video</span>
 	<button type="button" id="file-picker">Choose file</button>
 </div>
 <div id="drop-overlay" hidden></div>
@@ -25,13 +24,13 @@
 	<video id="main-video"></video>
 
 	<div class="controls" aria-controls="main-video">
-		<input type="range" aria-label="Video progress bar" value="0" step="any" tabindex="-1" id="video-bar">
+		<input type="range" aria-label="Progress bar" value="0" step="any" tabindex="-1" id="video-bar">
 
 		<button type="button" aria-label="Toggle play/pause" class="material-icons play-btn">play_arrow</button>
 		<button type="button" aria-label="Rewind 10 seconds" class="material-icons replay-btn">replay_10</button>
 		<button type="button" aria-label="Forward 10 seconds" class="material-icons forward-btn">forward_10</button>
 
-		<button type="button" aria-label="Toggle time elapsed/time remaining" id="time-indicator">
+		<button type="button" aria-label="Toggle time elapsed/remaining" id="time-indicator">
 			<time role="timer" class="current-time">00:00</time>
 			<time role="timer" class="time-remaining" hidden></time>
 			<time role="timer" class="duration"></time>

@@ -1,5 +1,9 @@
 'use strict'
 
+var preferredSpeed = 1.8
+var timeSkip = 10
+
+
 // VIDEO SELECTION
 // ---------------
 
@@ -14,20 +18,20 @@ var localStorageKey
 droppableElements.forEach(droppable => {
 	droppable.addEventListener('dragenter', function (e) {
 		if (e.dataTransfer.items[0].type.startsWith('video/')) {
+			console.info(`A video file has entered #${e.target.id}'s dragging area. Showing the drop overlay…`)
 			this.dataset.fileHover = true
 			dropOverlay.hidden = false
 		}
 	})
 })
 
-dropOverlay.addEventListener('dragover', function (e) {
-	e.preventDefault()
-})
+dropOverlay.addEventListener('dragover', e => e.preventDefault())
 
 dropOverlay.addEventListener('drop', async (e) => {
+	console.info(`A ${e.dataTransfer.items[0].type} file was dropped on #${e.target.id}.`)
 	e.preventDefault()
 
-	// The type check is done in dragenter and in manageFileHandle
+	// Type check is done in dragenter and in the click handler
 	const fileHandle = await e.dataTransfer.items[0].getAsFileSystemHandle()
 
 	manageFileHandle(fileHandle)
@@ -37,12 +41,12 @@ dropOverlay.addEventListener('drop', async (e) => {
 dropOverlay.addEventListener('dragleave', handleDragEnd)
 
 function handleDragEnd() {
+	console.info('The drag event has ended. Hiding the drop overlay…')
 	dropOverlay.hidden = true
 	droppableElements.forEach(droppable => {
 		delete droppable.dataset.fileHover
 	})
 }
-
 
 // FILE INPUT
 const filePicker = document.querySelector('#file-picker')
@@ -65,18 +69,16 @@ filePicker.addEventListener('click', async () => {
 	} catch (abortError) { }
 })
 
+// FILE HANDLING
 async function manageFileHandle(fileHandle) {
 	const file = await fileHandle.getFile()
 
-	if (!file.type.startsWith('video/'))
-		return
-
 	if (video.src) {
-		console.log('A video change was detected. Saving the old video state in local storage…')
+		console.info('A video change was detected. Saving the old video state in local storage…')
 		updateLocalStorage()
 		URL.revokeObjectURL(video.src)
 	} else {
-		console.log('Showing the player…')
+		console.info('Hiding the drag panel and showing the player…')
 		dragPanel.hidden = true
 		player.hidden = false
 	}
@@ -90,7 +92,7 @@ async function manageFileHandle(fileHandle) {
 
 	// Update the media session on first play
 	video.addEventListener('seeked', function () {
-		console.log('Setting title and artwork…')
+		console.info('First seek detected. Updating Global Media Controls…')
 		const artwork = capture()
 		navigator.mediaSession.metadata = new MediaMetadata({
 			title: fileName.textContent,
@@ -98,6 +100,7 @@ async function manageFileHandle(fileHandle) {
 				{ src: artwork, sizes: '512x512', type: 'image/png' }
 			]
 		})
+		console.info('Title and artwork for Global Media Controls updated.')
 	}, { once: true })
 
 	// Bind the global media controls to the video
@@ -159,6 +162,8 @@ zoomBtn.onclick = toggleZoom
 
 
 // TIME
+// ----
+
 const videoBar = document.querySelector('#video-bar')
 const timeIndicator = document.querySelector('#time-indicator')
 const currentTime = document.querySelector('.current-time')
@@ -166,16 +171,13 @@ const timeRemaining = document.querySelector('.time-remaining')
 const replayBtn = document.querySelector('.replay-btn')
 const forwardBtn = document.querySelector('.forward-btn')
 const duration = document.querySelector('.duration')
-var metadataAvailable = true // Used to prevent the time indicator from updating when the metadata is not loaded
 
 video.addEventListener('loadedmetadata', function () {
-	metadataAvailable = true
-
 	if (localStorage.getItem(localStorageKey)) {
-		console.log('Video state found in local storage. Restoring…')
+		console.info('Video state found in local storage. Restoring…')
 		restoreFromLocalStorage()
 	} else {
-		console.log('No video state found in local storage.')
+		console.info('No video state found in local storage.')
 	}
 
 	updateTimeIndicators()
@@ -186,15 +188,15 @@ video.addEventListener('loadedmetadata', function () {
 })
 
 video.addEventListener('emptied', function () {
-	metadataAvailable = false
-
 	// Needed when another video is loaded while the current one is playing
 	playBtn.textContent = 'play_arrow'
 })
 
 video.addEventListener('timeupdate', function () {
-	if (!metadataAvailable)
+	if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+		console.info('The video metadata is not loaded yet. Skipping timeupdate event.')
 		return
+	}
 
 	updateVideoBar()
 	updateTimeIndicators()
@@ -231,7 +233,7 @@ timeIndicator.addEventListener('click', function () {
 	[timeRemaining.hidden, currentTime.hidden] = [currentTime.hidden, timeRemaining.hidden]
 })
 
-// Save time in local storage when the window is closed
+// Save time in local storage when the window is closed/refreshed
 window.onbeforeunload = () => {
 	if (video.src && !video.ended) {
 		updateLocalStorage()
@@ -240,12 +242,14 @@ window.onbeforeunload = () => {
 
 // Delete video state from local storage
 video.onended = () => {
+	console.info('Video ended. Deleting video state from local storage…')
 	localStorage.removeItem(localStorageKey)
-	console.log('Video ended. Video state deleted from local storage.')
 }
 
 
 // KEYBOARD SHORTCUTS
+// ------------------
+
 document.addEventListener('keydown', (e) => {
 	if (e.key !== ' ') {
 		document.activeElement.blur()
@@ -288,8 +292,8 @@ document.addEventListener('keydown', (e) => {
 		case 't': // Toggle time indicator
 			toggleTimeIndicator()
 			break
-		case 'a': // Preferred speed
-			video.playbackRate = 2
+		case 'a': // Preferred fast speed
+			video.playbackRate = preferredSpeed
 			break
 		case 'm': // Toggle mute
 			toggleMute()
@@ -320,11 +324,11 @@ function clamp(min, value, max) {
 }
 
 function replay() {
-	video.currentTime = Math.max(video.currentTime - 10, 0);
+	video.currentTime = Math.max(video.currentTime - timeSkip, 0);
 }
 
 function forward() {
-	video.currentTime = Math.min(video.currentTime + 10, video.duration);
+	video.currentTime = Math.min(video.currentTime + timeSkip, video.duration);
 }
 
 function togglePictureInPicture() {
@@ -384,17 +388,18 @@ function updateLocalStorage() {
 		playbackRate: video.playbackRate
 	}
 	localStorage.setItem(localStorageKey, JSON.stringify(data))
-	console.log('Video state saved in local storage.')
+	console.info('Video state saved in local storage.')
 }
 
 function restoreFromLocalStorage() {
 	let data = JSON.parse(localStorage.getItem(localStorageKey))
 	video.currentTime = data.timer
 	video.playbackRate = data.playbackRate
-	console.log('Video state restored from local storage.')
+	console.info('Video state restored from local storage.')
 }
 
 function capture() {
+	console.info('Capturing a screenshot of the video…')
 	const canvas = document.createElement('canvas')
 	canvas.width = canvas.height = 512
 

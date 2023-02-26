@@ -1,7 +1,8 @@
 {
 	"name": "Player for local videos",
 	"short_name": "Video player",
-	"start_url": ".",
+	"start_url": "./index.html",
+	"id": "/index.html",
 	"display": "standalone",
 	"description": "Player for local videos with keyboard shortcuts",
 	"icons": [ {

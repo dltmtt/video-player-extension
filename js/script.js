@@ -1,8 +1,9 @@
 'use strict'
 
-var preferredSpeed = 1.8
-var timeSkip = 10
-
+var preferences = {
+	speed: 1.8,
+	timeSkip: 10
+}
 
 // VIDEO SELECTION
 // ---------------
@@ -297,7 +298,7 @@ document.addEventListener('keydown', (e) => {
 			toggleTimeIndicator()
 			break
 		case 'a': // Preferred fast speed
-			video.playbackRate = preferredSpeed
+			video.playbackRate = preferences.speed
 			break
 		case 'm': // Toggle mute
 			toggleMute()
@@ -328,11 +329,11 @@ function clamp(min, value, max) {
 }
 
 function replay() {
-	video.currentTime = Math.max(video.currentTime - timeSkip, 0);
+	video.currentTime = Math.max(video.currentTime - preferences.timeSkip, 0);
 }
 
 function forward() {
-	video.currentTime = Math.min(video.currentTime + timeSkip, video.duration);
+	video.currentTime = Math.min(video.currentTime + preferences.timeSkip, video.duration);
 }
 
 function togglePictureInPicture() {
@@ -387,18 +388,18 @@ async function hashFile(file) {
 }
 
 function updateLocalStorage() {
-	let data = {
+	let state = {
 		timer: video.currentTime,
 		playbackRate: video.playbackRate
 	}
-	localStorage.setItem(localStorageKey, JSON.stringify(data))
+	localStorage.setItem(localStorageKey, JSON.stringify(state))
 	console.info('Video state saved in local storage.')
 }
 
 function restoreFromLocalStorage() {
-	let data = JSON.parse(localStorage.getItem(localStorageKey))
-	video.currentTime = data.timer
-	video.playbackRate = data.playbackRate
+	let state = JSON.parse(localStorage.getItem(localStorageKey))
+	video.currentTime = state.timer
+	video.playbackRate = state.playbackRate
 	console.info('Video state restored from local storage.')
 }
 

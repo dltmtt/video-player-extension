@@ -15,5 +15,10 @@
 			"src": "favicon.png",
 			"sizes": "192x192"
 		} ],
-	"orientation": "landscape-primary"
+	"orientation": "landscape-primary",
+	"commands": {
+		"_execute_action": {
+			"suggested_key": "Ctrl+Shift+O"
+		}
+	}
 }

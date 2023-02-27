@@ -144,7 +144,6 @@ body {
 
 #video-bar {
 	--track-height: .375rem;
-	--progress: 0%;
 
 	position: absolute;
 	inset: 0;
@@ -155,7 +154,7 @@ body {
 	block-size: var(--track-height);
 
 	color: var(--text2);
-	background: linear-gradient(to right, currentColor var(--progress), var(--surface3) var(--progress));
+	background: linear-gradient(to right, currentColor var(--progress, 0%), var(--surface3) var(--progress, 0%));
 
 	transition: var(--duration);
 	transition-property: block-size, height, filter;

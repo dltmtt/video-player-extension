@@ -180,11 +180,8 @@ video.addEventListener('loadedmetadata', () => {
 		console.info('No video state found in local storage.');
 	}
 
-	updateTimeIndicators();
+	updateIndicators();
 	duration.textContent = secondsToTime(video.duration);
-
-	videoBar.setAttribute('max', video.duration);
-	updateVideoBar();
 });
 
 video.addEventListener('emptied', () => {
@@ -198,28 +195,23 @@ video.addEventListener('timeupdate', () => {
 		return;
 	}
 
-	updateVideoBar();
-	updateTimeIndicators();
+	// Update the progress bar
+	videoBar.valueAsNumber = (video.currentTime * 100) / video.duration;
+	updateIndicators();
 });
 
 // Seek to the point clicked on the progress bar
 videoBar.addEventListener('input', () => {
-	videoBar.style.setProperty("--progress", (videoBar.valueAsNumber * 100 / video.duration) + "%");
-
-	video.currentTime = videoBar.value;
+	video.currentTime = (videoBar.valueAsNumber * video.duration) / 100;
 
 	// Needed to show the time in real-time when the progress bar is dragged
-	updateTimeIndicators();
+	updateIndicators();
 });
 
-function updateTimeIndicators() {
+function updateIndicators() {
+	videoBar.style.setProperty("--progress", `${videoBar.valueAsNumber}%`);
 	currentTime.textContent = secondsToTime(video.currentTime);
 	timeRemaining.textContent = `-${secondsToTime(video.duration - video.currentTime)}`;
-}
-
-function updateVideoBar() {
-	videoBar.value = video.currentTime;
-	videoBar.style.setProperty("--progress", (videoBar.valueAsNumber * 100 / video.duration) + "%");
 }
 
 // videoBar also has tabindex="-1"

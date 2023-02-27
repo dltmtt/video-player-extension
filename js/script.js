@@ -5,6 +5,10 @@ var preferences = {
 	timeSkip: 10
 }
 
+
+// CLEANUP
+// -------
+
 console.groupCollapsed('Checking for localStorage entries older than 30 days…')
 for (const key of Object.keys(localStorage)) {
 	const entryDate = new Date(JSON.parse(localStorage.getItem(key)).timestamp)
@@ -16,6 +20,7 @@ for (const key of Object.keys(localStorage)) {
 	}
 }
 console.groupEnd()
+
 
 // VIDEO SELECTION
 // ---------------

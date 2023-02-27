@@ -8,8 +8,8 @@ This a video player for local videos whose main features are:
 
 Light mode | Dark mode
 :---------:|:--------:
-![Welcome screen (light mode)](https://user-images.githubusercontent.com/50383865/165765909-c72741f4-2a99-40aa-b3c6-5a8e622c5e40.png) | ![Welcome screen (dark mode)](https://user-images.githubusercontent.com/50383865/165765936-fbbebb27-6a37-4469-a44a-9b03ac261354.png)
-![Player (light mode)](https://user-images.githubusercontent.com/50383865/165766797-734916fd-f3e1-4a96-ac27-b2423431e158.png) | ![Player (dark mode)](https://user-images.githubusercontent.com/50383865/165766804-6310aa0c-4a04-426d-b37b-f978b9187222.png)
+![Welcome screen (light mode)](./screenshots/welcome-light.png) | ![Welcome screen (dark mode)](./screenshots/welcome-dark.png)
+![Player (light mode)](./screenshots/player-light.png) | ![Player (dark mode)](./screenshots/player-dark.png)
 
 ## Usage
 To use the extension, click on its tooltip icon or press `Ctrl+Shift+O`[^1].

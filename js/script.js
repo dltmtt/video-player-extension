@@ -5,18 +5,19 @@ var preferences = {
 	timeSkip: 10
 }
 
-// Delete localStorage entries older than 30 days
+console.groupCollapsed('Checking for localStorage entries older than 30 days…')
 for (const key in localStorage) {
 	if (Object.hasOwn(localStorage, key)) {
 		const entryDate = new Date(JSON.parse(localStorage.getItem(key)).timestamp)
 		if (entryDate < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) {
-			console.info(`Deleting the localStorage entry for ${key}…`)
 			localStorage.removeItem(key)
+			console.info(`${key} deleted.`)
 		} else {
-			console.info(`The localStorage entry for ${key} is still valid.`)
+			console.info(`${key} kept.`)
 		}
 	}
 }
+console.groupEnd()
 
 // VIDEO SELECTION
 // ---------------

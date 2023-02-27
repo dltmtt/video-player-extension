@@ -165,7 +165,7 @@ zoomBtn.onclick = toggleZoom;
 // TIME
 // ----
 
-const videoBar = document.querySelector('#video-bar');
+const progressBar = document.querySelector('#video-bar');
 const timeIndicator = document.querySelector('#time-indicator');
 const currentTime = document.querySelector('.current-time');
 const timeRemaining = document.querySelector('.time-remaining');
@@ -180,13 +180,9 @@ video.addEventListener('loadedmetadata', () => {
 		console.info('No video state found in local storage.');
 	}
 
+	updateProgressBarValue();
 	updateIndicators();
 	duration.textContent = secondsToTime(video.duration);
-});
-
-video.addEventListener('emptied', () => {
-	// Needed when another video is loaded while the current one is playing
-	playBtn.textContent = 'play_arrow';
 });
 
 video.addEventListener('timeupdate', () => {
@@ -195,27 +191,30 @@ video.addEventListener('timeupdate', () => {
 		return;
 	}
 
-	// Update the progress bar
-	videoBar.valueAsNumber = (video.currentTime * 100) / video.duration;
+	updateProgressBarValue();
 	updateIndicators();
 });
 
 // Seek to the point clicked on the progress bar
-videoBar.addEventListener('input', () => {
-	video.currentTime = (videoBar.valueAsNumber * video.duration) / 100;
+progressBar.addEventListener('input', () => {
+	video.currentTime = (progressBar.valueAsNumber * video.duration) / 100;
 
 	// Needed to show the time in real-time when the progress bar is dragged
 	updateIndicators();
 });
 
+function updateProgressBarValue() {
+	progressBar.valueAsNumber = (video.currentTime * 100) / video.duration;
+}
+
 function updateIndicators() {
-	videoBar.style.setProperty("--progress", `${videoBar.valueAsNumber}%`);
+	progressBar.style.setProperty("--progress", `${progressBar.valueAsNumber}%`);
 	currentTime.textContent = secondsToTime(video.currentTime);
 	timeRemaining.textContent = `-${secondsToTime(video.duration - video.currentTime)}`;
 }
 
-// videoBar also has tabindex="-1"
-videoBar.onfocus = () => { videoBar.blur(); };
+// progressBar also has tabindex="-1"
+progressBar.onfocus = () => { progressBar.blur(); };
 
 replayBtn.onclick = replay;
 forwardBtn.onclick = forward;
@@ -223,6 +222,11 @@ forwardBtn.onclick = forward;
 // Toggle current time/remaining time
 timeIndicator.addEventListener('click', () => {
 	[timeRemaining.hidden, currentTime.hidden] = [currentTime.hidden, timeRemaining.hidden];
+});
+
+video.addEventListener('emptied', () => {
+	// Needed when another video is loaded while the current one is playing
+	playBtn.textContent = 'play_arrow';
 });
 
 // Save time in local storage when the window is closed/refreshed

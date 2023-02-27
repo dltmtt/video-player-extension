@@ -7,8 +7,8 @@ var preferences = {
 
 // Delete localStorage entries older than 30 days
 for (const key in localStorage) {
-	if (localStorage.hasOwnProperty(key)) {
-		const entryDate = new Date(localStorage.getItem(key))
+	if (Object.hasOwn(localStorage, key)) {
+		const entryDate = new Date(JSON.parse(localStorage.getItem(key)).timestamp)
 		if (entryDate < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) {
 			console.info(`Deleting the localStorage entry for ${key}…`)
 			localStorage.removeItem(key)
@@ -404,7 +404,7 @@ function updateLocalStorage() {
 	let state = {
 		timer: video.currentTime,
 		playbackRate: video.playbackRate,
-		date_modified: Date.now()
+		timestamp: Date.now()
 	}
 	localStorage.setItem(localStorageKey, JSON.stringify(state))
 	console.info('Video state saved in local storage.')

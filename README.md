@@ -21,8 +21,13 @@ The following keyboard shortcuts are supported:
 | Key | Action |
 |:---:|---|
 | `Space`<br>`k` | Toggle play/pause |
+<<<<<<< HEAD
 | `S` | Slow down by 0.1× |
 | `D` | Speed up by 0.1× |
+=======
+| `S` | Slow down by 0.1 |
+| `D` | Speed up by 0.1 |
+>>>>>>> 1405972 (Update README)
 | `Z`<br>`Left arrow`<br>`Down arrow` | Rewind 10 seconds |
 | `X`<br>`Right arrow`<br>`Up arrow` | Forward 10 seconds |
 | `R` | Reset default speed |

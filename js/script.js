@@ -6,15 +6,13 @@ var preferences = {
 }
 
 console.groupCollapsed('Checking for localStorage entries older than 30 days…')
-for (const key in localStorage) {
-	if (Object.hasOwn(localStorage, key)) {
-		const entryDate = new Date(JSON.parse(localStorage.getItem(key)).timestamp)
-		if (entryDate < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) {
-			localStorage.removeItem(key)
-			console.info(`${key} deleted.`)
-		} else {
-			console.info(`${key} kept.`)
-		}
+for (const key of Object.keys(localStorage)) {
+	const entryDate = new Date(JSON.parse(localStorage.getItem(key)).timestamp)
+	if (entryDate < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) {
+		localStorage.removeItem(key)
+		console.info(`${key} deleted.`)
+	} else {
+		console.info(`${key} kept.`)
 	}
 }
 console.groupEnd()

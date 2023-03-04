@@ -1,22 +1,18 @@
 @font-face {
 	font-family: 'JetBrains Mono';
 	font-weight: 1 1000;
-	src: local('JetBrains Mono'),
-		url('../fonts/JetBrainsMono.ttf') format('truetype');
+	src: url(../fonts/JetBrains-Mono.woff2) format(woff2) tech(variations);
 }
 
 @font-face {
-	font-family: 'Material Symbols Rounded';
+	font-family: 'Material Symbols';
 	font-weight: 1 1000;
-	src: local('Material Symbols Rounded'),
-		url('../fonts/MaterialSymbolsRounded.ttf') format('truetype');
+	src: url(../fonts/Material-Symbols.woff2) format(woff2) tech(variations);
 }
 
-.material-icons {
+.material-icon {
 	display: inline-block;
 
-	font: 250 1.5rem / 1 'Material Symbols Rounded';
+	font: 250 1.5rem / 1 'Material Symbols';
 	font-variation-settings: 'FILL' 0;
-	text-rendering: optimizeLegibility;
-	white-space: nowrap;
 }

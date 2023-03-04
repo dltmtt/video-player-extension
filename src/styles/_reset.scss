@@ -30,6 +30,8 @@ input {
 	}
 
 	&[type="range"] {
+		font-size: inherit;
+
 		&::-webkit-slider-runnable-track {
 			cursor: pointer;
 		}

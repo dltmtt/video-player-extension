@@ -1,5 +1,5 @@
 :root {
-	// LIGHT THEME
+	/* Light theme */
 	--light: hsl(var(--hue) var(--saturation) var(--lightness));
 
 	--text1-light: hsl(var(--hue) var(--saturation) 10%);
@@ -13,7 +13,7 @@
 	--surface-shadow-light: var(--hue) 10% 20%;
 	--shadow-strength-light: 2%;
 
-	// DARK THEME
+	/* Dark theme */
 	--dark: hsl(var(--hue) calc(var(--saturation) / 2) calc(var(--lightness) / 1.5));
 
 	--text1-dark: hsl(var(--hue) 15% 85%);

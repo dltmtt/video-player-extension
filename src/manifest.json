@@ -7,12 +7,12 @@
 	"version": "1.1",
 	"offline_enabled": true,
 	"background": {
-		"service_worker": "js/background.js"
+		"service_worker": "scripts/background.js"
 	},
 	"icons": {
 		"48": "icons/icon48.png",
 		"128": "icons/icon128.png",
-		"192": "favicon.png"
+		"192": "icons/favicon.png"
 	},
 	"action": { },
 	"commands": {

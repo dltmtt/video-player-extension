@@ -1,25 +1,25 @@
 {
 	"manifest_version": 3,
 	"name": "Player for local videos",
-	"version": "1",
-	"action": { },
-	"description": "Player for local videos with keyboard shortcuts",
+	"short_name": "Video player",
+	"description": "Player for local videos with light/dark theme, keyboard shortcuts, progress retrieval and more.",
+	"author": "Matteo Delton",
+	"version": "1.1",
+	"offline_enabled": true,
+	"background": {
+		"service_worker": "js/background.js"
+	},
 	"icons": {
 		"48": "icons/icon48.png",
 		"128": "icons/icon128.png",
 		"192": "favicon.png"
 	},
-	"author": "Matteo Delton",
-	"background": {
-		"service_worker": "js/background.js"
-	},
+	"action": { },
 	"commands": {
 		"_execute_action": {
 			"suggested_key": {
-				"default": "Ctrl+Shift+O"
+				"default": "Alt+Shift+O"
 			}
 		}
-	},
-	"offline_enabled": true,
-	"short_name": "Video player"
+	}
 }

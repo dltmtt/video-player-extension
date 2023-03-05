@@ -85,7 +85,9 @@ async function manageFileHandle(fileHandle) {
 		console.info('The drag panel was hidden. The player is now visible.');
 	}
 
-	// Don't change the order of these lines!
+	// Don't change the order of these two lines unless you know what you're doing!
+	// For reasons I don't understand, if I do it the other way around and drag 'n' drop
+	// another video, the previous video's state is restored instead of the new one's
 	localStorageKey = await hashFile(file);
 	video.src = URL.createObjectURL(file);
 

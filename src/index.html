@@ -13,33 +13,34 @@
 
 <script src="scripts/script.js" defer></script>
 
-<div class="droppable" id="drag-panel">
-	<span id="drag-panel-text">Drag and drop a video</span>
+<div class="droppable" id="welcome-screen">
+	<span>Drag and drop a video</span>
 	<button type="button" id="file-picker">Choose file</button>
 </div>
+
 <div id="drop-overlay" hidden></div>
 
-<div class="player droppable" hidden>
-	<video id="main-video"></video>
+<div id="player" hidden>
+	<video id="video"></video>
 
-	<div class="controls" aria-controls="main-video">
+	<div id="controls" aria-controls="video">
 		<input type="range" aria-label="Progress bar" value="0" step="any" tabindex="-1" id="video-bar">
 
-		<button type="button" aria-label="Toggle play/pause" class="material-icon play-btn">play_arrow</button>
-		<button type="button" aria-label="Rewind 10 seconds" class="material-icon replay-btn">replay_10</button>
-		<button type="button" aria-label="Forward 10 seconds" class="material-icon forward-btn">forward_10</button>
+		<button type="button" aria-label="Toggle play/pause" class="material-icon" id="play-btn">play_arrow</button>
+		<button type="button" aria-label="Rewind 10 seconds" class="material-icon" id="replay-btn">replay_10</button>
+		<button type="button" aria-label="Forward 10 seconds" class="material-icon" id="forward-btn">forward_10</button>
 
 		<button type="button" aria-label="Toggle time elapsed/remaining" id="time-indicator">
-			<time role="timer" class="current-time">00:00</time>
-			<time role="timer" class="time-remaining" hidden></time>
-			<time role="timer" class="duration"></time>
+			<time role="timer" id="current-time">00:00</time>
+			<time role="timer" id="time-remaining" hidden></time>
+			<time role="timer" id="duration"></time>
 		</button>
 		<div aria-label="Video name" id="file-name-container">
 			<span id="file-name"></span>
 		</div>
 
 		<input type="number" aria-label="Speed controls" value="1.00" min="0.1" max="16" step="0.1" id="speed-controls">
-		<button type="button" aria-label="Toggle zoom" class="material-icon zoom-btn">zoom_out_map</button>
-		<button type="button" aria-label="Toggle fullscreen" class="material-icon fullscreen-btn">fullscreen</button>
+		<button type="button" aria-label="Toggle zoom" class="material-icon" id="zoom-btn">zoom_out_map</button>
+		<button type="button" aria-label="Toggle fullscreen" class="material-icon" id="fullscreen-btn">fullscreen</button>
 	</div>
 </div>

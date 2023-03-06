@@ -117,10 +117,10 @@ async function manageFileHandle(fileHandle) {
 // ----------------
 
 // NAVIGATION
-const player = document.querySelector('.player');
-const playBtn = document.querySelector('.play-btn');
-const fullscreenBtn = document.querySelector('.fullscreen-btn');
-const zoomBtn = document.querySelector('.zoom-btn');
+const player = document.querySelector('#player');
+const playBtn = document.querySelector('#play-btn');
+const fullscreenBtn = document.querySelector('#fullscreen-btn');
+const zoomBtn = document.querySelector('#zoom-btn');
 const speedControls = document.querySelector('#speed-controls');
 
 // Play/pause
@@ -164,11 +164,11 @@ zoomBtn.onclick = toggleZoom;
 
 const progressBar = document.querySelector('#video-bar');
 const timeIndicator = document.querySelector('#time-indicator');
-const currentTime = document.querySelector('.current-time');
-const timeRemaining = document.querySelector('.time-remaining');
-const replayBtn = document.querySelector('.replay-btn');
-const forwardBtn = document.querySelector('.forward-btn');
-const duration = document.querySelector('.duration');
+const currentTime = document.querySelector('#current-time');
+const timeRemaining = document.querySelector('#time-remaining');
+const replayBtn = document.querySelector('#replay-btn');
+const forwardBtn = document.querySelector('#forward-btn');
+const duration = document.querySelector('#duration');
 
 video.addEventListener('loadedmetadata', () => {
 	if (localStorage.getItem(localStorageKey)) {
@@ -255,7 +255,7 @@ video.onended = () => {
 // KEYBOARD SHORTCUTS
 // ------------------
 
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', e => {
 	// Ignore key presses when a modifier key is pressed
 	if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey)
 		return;

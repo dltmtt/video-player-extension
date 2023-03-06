@@ -19,7 +19,7 @@
 html,
 body,
 #drag-panel,
-.player {
+#player {
     height: 100%;
 }
 
@@ -85,7 +85,7 @@ body {
     box-shadow: none;
 }
 
-.player {
+#player {
     display: flex;
     flex-direction: column;
 
@@ -93,7 +93,7 @@ body {
     background-image: radial-gradient(var(--surface4), var(--surface3));
 }
 
-.player video {
+video {
     flex: 1;
     min-block-size: 0;
     background-color: var(--surface2);
@@ -102,13 +102,13 @@ body {
     transition-property: scale, border-radius, border;
 }
 
-.player[data-file-hover] video {
+#player[data-file-hover] video {
     scale: 0.75;
     border-radius: 1rem;
     border: medium solid var(--surface4);
 }
 
-.controls {
+#controls {
     --spacing: .75rem;
 
     position: relative;
@@ -122,27 +122,27 @@ body {
     background-color: var(--surface2);
 }
 
-.controls > * {
+#controls > * {
     height: 2.75rem;
 }
 
-.controls button {
+#controls button {
     transition: var(--duration);
     transition-property: color, background-color, box-shadow, font-variation-settings;
 }
 
-.controls button:is(:hover, :focus-visible) {
+#controls button:is(:hover, :focus-visible) {
     color: var(--text1);
     background-color: var(--surface3);
     box-shadow: 0 0 1px;
 }
 
-.controls [class $= "-btn"] {
+#controls [id$="-btn"] {
     border-radius: 50%;
     aspect-ratio: 1;
 }
 
-.controls [class $= "-btn"]:is(:hover, :focus-visible) {
+#controls [id$="-btn"]:is(:hover, :focus-visible) {
     font-variation-settings: "FILL" 1;
 }
 
@@ -168,7 +168,7 @@ body {
     --track-height: .5rem;
 }
 
-input[type=range]::-webkit-slider-thumb {
+#video-bar::-webkit-slider-thumb {
     appearance: none;
 
     --thumb-size: 1rem;
@@ -181,7 +181,7 @@ input[type=range]::-webkit-slider-thumb {
     transition: box-shadow var(--duration);
 }
 
-input[type=range]::-webkit-slider-thumb:is(:hover, :focus-visible) {
+#video-bar::-webkit-slider-thumb:is(:hover, :focus-visible) {
     margin: 0;
     box-shadow: 0 0 0 0.5em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
 }
@@ -192,7 +192,7 @@ input[type=range]::-webkit-slider-thumb:is(:hover, :focus-visible) {
     padding-inline: var(--spacing);
 }
 
-.duration::before {
+#duration::before {
     content: " / ";
 }
 

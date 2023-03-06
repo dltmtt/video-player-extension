@@ -96,14 +96,9 @@ async function manageFileHandle(fileHandle) {
 
 	// Update the media session on first play
 	video.addEventListener('seeked', () => {
-		const artwork = capture();
 		navigator.mediaSession.metadata = new MediaMetadata({
-			title: fileName.textContent,
-			artwork: [
-				{ src: artwork, sizes: '512x512', type: 'image/png' }
-			]
+			title: fileName.textContent
 		});
-		console.info('Title and artwork for Global Media Controls updated.');
 	}, { once: true });
 
 	// Bind the global media controls to the video
@@ -412,20 +407,4 @@ function restoreFromLocalStorage() {
 	video.currentTime = state.timer;
 	video.playbackRate = state.playbackRate;
 	console.info('Video state restored from local storage.');
-}
-
-function capture() {
-	const canvas = document.createElement('canvas');
-	canvas.width = canvas.height = 512;
-
-	const scale = Math.min(canvas.width / video.videoWidth, canvas.height / video.videoHeight);
-	const x = (canvas.width / 2) - (video.videoWidth / 2) * scale;
-	const y = (canvas.height / 2) - (video.videoHeight / 2) * scale;
-
-	const context = canvas.getContext('2d');
-	context.drawImage(video, x, y, video.videoWidth * scale, video.videoHeight * scale);
-
-	const dataURL = canvas.toDataURL();
-
-	return dataURL;
 }

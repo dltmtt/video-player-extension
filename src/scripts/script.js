@@ -22,7 +22,6 @@ droppableElements.forEach(droppable => {
 		if (e.dataTransfer.items[0].type.startsWith('video/')) {
 			droppable.dataset.fileHover = true;
 			dropOverlay.hidden = false;
-			console.info(`A video file has entered #${e.target.id}'s dragging area. The drop overlay is now visible.`);
 		}
 	});
 });
@@ -30,11 +29,17 @@ droppableElements.forEach(droppable => {
 dropOverlay.addEventListener('dragover', e => e.preventDefault());
 
 dropOverlay.addEventListener('drop', async (e) => {
-	console.info(`A ${e.dataTransfer.items[0].type} file was dropped on #${e.target.id}.`);
 	e.preventDefault();
 
 	// Type check is done in dragenter and in the click handler
 	const fileHandle = await e.dataTransfer.items[0].getAsFileSystemHandle();
+
+	showLoadingScreen();
+
+	function showLoadingScreen() {
+		document.querySelector('span').textContent = 'Loading…';
+		document.querySelector('#file-picker').hidden = true;
+	}
 
 	manageFileHandle(fileHandle);
 	handleDragEnd();
@@ -47,7 +52,6 @@ function handleDragEnd() {
 	droppableElements.forEach(droppable => {
 		delete droppable.dataset.fileHover;
 	});
-	console.info('The drag event has ended. The drop overlay was hidden.');
 }
 
 // FILE INPUT
@@ -56,14 +60,12 @@ filePicker.addEventListener('click', async () => {
 	try {
 		const [fileHandle] = await window.showOpenFilePicker({
 			excludeAcceptAllOption: true,
-			types: [
-				{
-					description: 'Videos',
-					accept: {
-						'video/*': ['.avi', '.mp4', '.mpeg', '.ogv', '.ts', '.webm', '.3gp', '.3g2']
-					}
+			types: [{
+				description: 'Videos',
+				accept: {
+					'video/*': ['.avi', '.mp4', '.mpeg', '.ogv', '.ts', '.webm', '.3gp', '.3g2']
 				}
-			],
+			}],
 			multiple: false
 		});
 
@@ -75,14 +77,12 @@ filePicker.addEventListener('click', async () => {
 async function manageFileHandle(fileHandle) {
 	const file = await fileHandle.getFile();
 
+	// Display the file name without the extension
+	fileName.textContent = file.name.replace(/\.[^.]+$/, '');
+
 	if (video.src) {
-		console.info('A video change was detected. Saving the old video state in local storage…');
 		updateLocalStorage();
 		URL.revokeObjectURL(video.src);
-	} else {
-		dragPanel.hidden = true;
-		player.hidden = false;
-		console.info('The drag panel was hidden. The player is now visible.');
 	}
 
 	// Don't change the order of these two lines unless you know what you're doing!
@@ -91,14 +91,22 @@ async function manageFileHandle(fileHandle) {
 	localStorageKey = await hashFile(file);
 	video.src = URL.createObjectURL(file);
 
-	// Remove the file extension
-	fileName.textContent = file.name.replace(/\.[^.]+$/, '');
-
 	// Update the media session on first play
 	video.addEventListener('seeked', () => {
 		navigator.mediaSession.metadata = new MediaMetadata({
 			title: fileName.textContent
 		});
+
+		// If the fonts are not loaded in 100ms, show the player anyway
+		const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+		Promise.race([document.fonts.ready, wait(100)]).then(() => {
+			document.startViewTransition?.(showPlayer) ?? showPlayer();
+		});
+
+		function showPlayer() {
+			dragPanel.hidden = true;
+			player.hidden = false;
+		}
 	}, { once: true });
 
 	// Bind the global media controls to the video
@@ -173,22 +181,21 @@ const duration = document.querySelector('#duration');
 video.addEventListener('loadedmetadata', () => {
 	if (localStorage.getItem(localStorageKey)) {
 		restoreFromLocalStorage();
-	} else {
-		console.info('No video state found in local storage.');
 	}
 
 	updateProgressBarValue();
+	updateProgressBarVisually();
 	updateIndicators();
 	duration.textContent = secondsToTime(video.duration);
 });
 
 video.addEventListener('timeupdate', () => {
 	if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
-		console.info('The video metadata is not loaded yet. Skipping timeupdate event.');
 		return;
 	}
 
 	updateProgressBarValue();
+	updateProgressBarVisually();
 	updateIndicators();
 });
 
@@ -197,6 +204,7 @@ progressBar.addEventListener('input', () => {
 	video.currentTime = (progressBar.valueAsNumber * video.duration) / 100;
 
 	// Needed to show the time in real-time when the progress bar is dragged
+	updateProgressBarVisually();
 	updateIndicators();
 });
 
@@ -204,8 +212,11 @@ function updateProgressBarValue() {
 	progressBar.valueAsNumber = (video.currentTime * 100) / video.duration;
 }
 
-function updateIndicators() {
+function updateProgressBarVisually() {
 	progressBar.style.setProperty("--progress", `${progressBar.valueAsNumber}%`);
+}
+
+function updateIndicators() {
 	currentTime.textContent = secondsToTime(video.currentTime);
 	timeRemaining.textContent = `-${secondsToTime(video.duration - video.currentTime)}`;
 }
@@ -234,21 +245,15 @@ window.onbeforeunload = () => {
 };
 
 // CLEANUP
-console.groupCollapsed('Saved states of videos last opened more than 30 days ago will be deleted.');
 for (const key of Object.keys(localStorage)) {
 	const entryDate = new Date(JSON.parse(localStorage.getItem(key)).last_opened);
 	if (entryDate < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) {
 		localStorage.removeItem(key);
-		console.info(`${key} deleted.`);
-	} else {
-		console.info(`${key} kept.`);
 	}
 }
-console.groupEnd();
 
 video.onended = () => {
 	localStorage.removeItem(localStorageKey);
-	console.info('Video ended. Video state deleted from local storage.');
 };
 
 
@@ -315,7 +320,8 @@ document.addEventListener('keydown', e => {
 			break;
 		case 'f':
 		case 'Enter':
-			if (document.activeElement.tagName !== 'BUTTON' && document.activeElement.tagName !== 'INPUT')
+			if (document.activeElement.tagName !== 'BUTTON' &&
+				document.activeElement.tagName !== 'INPUT')
 				toggleFullScreen();
 	}
 });
@@ -399,12 +405,10 @@ function updateLocalStorage() {
 		last_opened: Date.now()
 	};
 	localStorage.setItem(localStorageKey, JSON.stringify(state));
-	console.info('Video state saved in local storage.');
 }
 
 function restoreFromLocalStorage() {
 	let state = JSON.parse(localStorage.getItem(localStorageKey));
 	video.currentTime = state.timer;
 	video.playbackRate = state.playbackRate;
-	console.info('Video state restored from local storage.');
 }

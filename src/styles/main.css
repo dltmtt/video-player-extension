@@ -158,7 +158,7 @@ video {
     block-size: var(--track-height);
 
     color: var(--text2);
-    background: linear-gradient(to right, currentColor var(--progress, 0%), var(--surface3) var(--progress, 0%));
+    background: no-repeat left / var(--progress, 0%) linear-gradient(currentColor, currentColor) var(--surface3);
 
     transition: var(--duration);
     transition-property: block-size, height, filter;

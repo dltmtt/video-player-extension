@@ -18,8 +18,8 @@
 
 html,
 body,
-#welcome-screen,
-#player {
+#drag-panel,
+.player {
     height: 100%;
 }
 
@@ -33,7 +33,7 @@ body {
     z-index: 1;
 }
 
-#welcome-screen {
+#drag-panel {
     display: grid;
     place-content: center;
     place-items: center;
@@ -47,12 +47,12 @@ body {
     transition: box-shadow var(--duration);
 }
 
-#welcome-screen[data-file-hover] {
+#drag-panel[data-file-hover] {
     box-shadow: inset 0 0 0.75em 0.25em;
 }
 
 /* Visible when the window is shrunk */
-#welcome-screen > * {
+#drag-panel > * {
     margin-inline: 1em;
     text-align: center;
 }
@@ -85,7 +85,7 @@ body {
     box-shadow: none;
 }
 
-#player {
+.player {
     display: flex;
     flex-direction: column;
 
@@ -93,7 +93,7 @@ body {
     background-image: radial-gradient(var(--surface4), var(--surface3));
 }
 
-#player video {
+.player video {
     flex: 1;
     min-block-size: 0;
     background-color: var(--surface2);
@@ -102,13 +102,13 @@ body {
     transition-property: scale, border-radius, border;
 }
 
-#player[data-file-hover] video {
+.player[data-file-hover] video {
     scale: 0.75;
     border-radius: 1rem;
     border: medium solid var(--surface4);
 }
 
-#controls {
+.controls {
     --spacing: .75rem;
 
     position: relative;
@@ -122,27 +122,27 @@ body {
     background-color: var(--surface2);
 }
 
-#controls > * {
+.controls > * {
     height: 2.75rem;
 }
 
-#controls button {
+.controls button {
     transition: var(--duration);
     transition-property: color, background-color, box-shadow, font-variation-settings;
 }
 
-#controls button:is(:hover, :focus-visible) {
+.controls button:is(:hover, :focus-visible) {
     color: var(--text1);
     background-color: var(--surface3);
     box-shadow: 0 0 1px;
 }
 
-#controls [id $= "-btn"] {
+.controls [class $= "-btn"] {
     border-radius: 50%;
     aspect-ratio: 1;
 }
 
-#controls [id $= "-btn"]:is(:hover, :focus-visible) {
+.controls [class $= "-btn"]:is(:hover, :focus-visible) {
     font-variation-settings: "FILL" 1;
 }
 
@@ -192,7 +192,7 @@ input[type=range]::-webkit-slider-thumb:is(:hover, :focus-visible) {
     padding-inline: var(--spacing);
 }
 
-#duration::before {
+.duration::before {
     content: " / ";
 }
 
@@ -249,26 +249,4 @@ input[type=range]::-webkit-slider-thumb:is(:hover, :focus-visible) {
 #speed-controls:is(:hover, :focus-visible)::-webkit-inner-spin-button {
     opacity: 1;
     margin: 0;
-}
-
-@keyframes slide-up {
-    from {
-        transform: translateY(100%);
-    }
-}
-
-@keyframes fade-in {
-    from {
-        opacity: 0;
-    }
-}
-
-@keyframes fade-out {
-    to {
-        opacity: 0;
-    }
-}
-
-#player {
-    view-transition-name: player;
 }

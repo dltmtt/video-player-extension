@@ -10,32 +10,33 @@ let preferences = {
 // ---------------
 
 // DRAG AND DROP
-const welcomeScreen = document.querySelector('#welcome-screen');
+const dragPanel = document.querySelector('#drag-panel');
 const dropOverlay = document.querySelector('#drop-overlay');
 const droppableElements = document.querySelectorAll('.droppable');
 const fileName = document.querySelector('#file-name');
 const video = document.querySelector('video');
 let localStorageKey;
 
-droppableElements.forEach((droppable) => {
-	droppable.addEventListener('dragenter', (e) => {
-		let fileType = e.dataTransfer.items[0].type;
-		if (fileType.startsWith('video/')) {
-			droppable.dataset.fileHover = fileType;
+droppableElements.forEach(droppable => {
+	droppable.addEventListener('dragenter', e => {
+		if (e.dataTransfer.items[0].type.startsWith('video/')) {
+			droppable.dataset.fileHover = true;
 			dropOverlay.hidden = false;
+			console.info(`A video file has entered #${e.target.id}'s dragging area. The drop overlay is now visible.`);
 		}
 	});
 });
 
-dropOverlay.addEventListener('dragover', (e) => e.preventDefault());
+dropOverlay.addEventListener('dragover', e => e.preventDefault());
 
 dropOverlay.addEventListener('drop', async (e) => {
+	console.info(`A ${e.dataTransfer.items[0].type} file was dropped on #${e.target.id}.`);
 	e.preventDefault();
 
 	// Type check is done in dragenter and in the click handler
 	const fileHandle = await e.dataTransfer.items[0].getAsFileSystemHandle();
 
-	await manageFileHandle(fileHandle);
+	manageFileHandle(fileHandle);
 	handleDragEnd();
 });
 
@@ -43,9 +44,10 @@ dropOverlay.addEventListener('dragleave', handleDragEnd);
 
 function handleDragEnd() {
 	dropOverlay.hidden = true;
-	droppableElements.forEach((droppable) => {
+	droppableElements.forEach(droppable => {
 		delete droppable.dataset.fileHover;
 	});
+	console.info('The drag event has ended. The drop overlay was hidden.');
 }
 
 // FILE INPUT
@@ -54,16 +56,18 @@ filePicker.addEventListener('click', async () => {
 	try {
 		const [fileHandle] = await window.showOpenFilePicker({
 			excludeAcceptAllOption: true,
-			types: [{
-				description: 'Videos',
-				accept: {
-					'video/*': ['.avi', '.mp4', '.mpeg', '.ogv', '.ts', '.webm', '.3gp', '.3g2']
+			types: [
+				{
+					description: 'Videos',
+					accept: {
+						'video/*': ['.avi', '.mp4', '.mpeg', '.ogv', '.ts', '.webm', '.3gp', '.3g2']
+					}
 				}
-			}],
+			],
 			multiple: false
 		});
 
-		await manageFileHandle(fileHandle);
+		manageFileHandle(fileHandle);
 	} catch (abortError) { }
 });
 
@@ -71,50 +75,45 @@ filePicker.addEventListener('click', async () => {
 async function manageFileHandle(fileHandle) {
 	const file = await fileHandle.getFile();
 
-	// Remove the file extension
+	if (video.src) {
+		console.info('A video change was detected. Saving the old video state in local storage…');
+		updateLocalStorage();
+		URL.revokeObjectURL(video.src);
+	} else {
+		dragPanel.hidden = true;
+		player.hidden = false;
+		console.info('The drag panel was hidden. The player is now visible.');
+	}
+
+	// Don't change the order of these two lines unless you know what you're doing!
+	// For reasons I don't understand, if I do it the other way around and drag 'n' drop
+	// another video, the previous video's state is restored instead of the new one's
+	localStorageKey = await hashFile(file);
 	video.src = URL.createObjectURL(file);
+
+	// Remove the file extension
 	fileName.textContent = file.name.replace(/\.[^.]+$/, '');
 
-	video.addEventListener('loadedmetadata', () => {
-		duration.textContent = secondsToTime(video.duration);
-
+	// Update the media session on first play
+	video.addEventListener('seeked', () => {
+		const artwork = capture();
 		navigator.mediaSession.metadata = new MediaMetadata({
-			title: fileName.textContent
+			title: fileName.textContent,
+			artwork: [
+				{ src: artwork, sizes: '512x512', type: 'image/png' }
+			]
 		});
-
-		const actionHandlers = [
-			['seekbackward', replay],
-			['seekforward', forward]
-		];
-
-		// Bind the Global Media Controls to the video
-		for (const [action, handler] of actionHandlers) {
-			navigator.mediaSession.setActionHandler(action, handler);
-		}
-
-		// If the fonts are not loaded in 100ms, show the player anyway
-		const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-		Promise.race([document.fonts.ready, wait(100)]).then(() => {
-			document.startViewTransition?.(showPlayer) ?? showPlayer();
-		});
-
-		function showPlayer() {
-			welcomeScreen.hidden = true;
-			player.hidden = false;
-		}
+		console.info('Title and artwork for Global Media Controls updated.');
 	}, { once: true });
 
-	localStorageKey = await hashFile(file);
-	if (localStorage.getItem(localStorageKey)) {
-		let { timer, playbackRate } = JSON.parse(localStorage.getItem(localStorageKey));
-		video.currentTime = timer,
-		video.playbackRate = playbackRate;
+	// Bind the global media controls to the video
+	const actionHandlers = [
+		['seekbackward', replay],
+		['seekforward', forward]
+	];
 
-		// Here is where the video is loading to the point where it was last played
-
-		video.addEventListener('seeked', () => {
-			// The video is now ready to be played
-		}, { once: true });
+	for (const [action, handler] of actionHandlers) {
+		navigator.mediaSession.setActionHandler(action, handler);
 	}
 }
 
@@ -123,10 +122,10 @@ async function manageFileHandle(fileHandle) {
 // ----------------
 
 // NAVIGATION
-const player = document.querySelector('#player');
-const playBtn = document.querySelector('#play-btn');
-const fullscreenBtn = document.querySelector('#fullscreen-btn');
-const zoomBtn = document.querySelector('#zoom-btn');
+const player = document.querySelector('.player');
+const playBtn = document.querySelector('.play-btn');
+const fullscreenBtn = document.querySelector('.fullscreen-btn');
+const zoomBtn = document.querySelector('.zoom-btn');
 const speedControls = document.querySelector('#speed-controls');
 
 // Play/pause
@@ -170,15 +169,27 @@ zoomBtn.onclick = toggleZoom;
 
 const progressBar = document.querySelector('#video-bar');
 const timeIndicator = document.querySelector('#time-indicator');
-const currentTime = document.querySelector('#current-time');
-const timeRemaining = document.querySelector('#time-remaining');
-const replayBtn = document.querySelector('#replay-btn');
-const forwardBtn = document.querySelector('#forward-btn');
-const duration = document.querySelector('#duration');
+const currentTime = document.querySelector('.current-time');
+const timeRemaining = document.querySelector('.time-remaining');
+const replayBtn = document.querySelector('.replay-btn');
+const forwardBtn = document.querySelector('.forward-btn');
+const duration = document.querySelector('.duration');
+
+video.addEventListener('loadedmetadata', () => {
+	if (localStorage.getItem(localStorageKey)) {
+		restoreFromLocalStorage();
+	} else {
+		console.info('No video state found in local storage.');
+	}
+
+	updateProgressBarValue();
+	updateIndicators();
+	duration.textContent = secondsToTime(video.duration);
+});
 
 video.addEventListener('timeupdate', () => {
-	// Needed only if the video src is changed after the video is loaded
 	if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+		console.info('The video metadata is not loaded yet. Skipping timeupdate event.');
 		return;
 	}
 
@@ -228,15 +239,21 @@ window.onbeforeunload = () => {
 };
 
 // CLEANUP
+console.groupCollapsed('Saved states of videos last opened more than 30 days ago will be deleted.');
 for (const key of Object.keys(localStorage)) {
 	const entryDate = new Date(JSON.parse(localStorage.getItem(key)).last_opened);
 	if (entryDate < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) {
 		localStorage.removeItem(key);
+		console.info(`${key} deleted.`);
+	} else {
+		console.info(`${key} kept.`);
 	}
 }
+console.groupEnd();
 
 video.onended = () => {
 	localStorage.removeItem(localStorageKey);
+	console.info('Video ended. Video state deleted from local storage.');
 };
 
 
@@ -376,7 +393,7 @@ async function hashFile(file) {
 	const hashAsArray = Array.from(hashAsUint8);
 
 	// Convert each byte to a hex string
-	const hashAsString = hashAsArray.map((b) => { b.toString(16).padStart(2, '0') }).join('');
+	const hashAsString = hashAsArray.map(b => b.toString(16).padStart(2, '0')).join('');
 	return hashAsString;
 }
 
@@ -387,4 +404,28 @@ function updateLocalStorage() {
 		last_opened: Date.now()
 	};
 	localStorage.setItem(localStorageKey, JSON.stringify(state));
+	console.info('Video state saved in local storage.');
+}
+
+function restoreFromLocalStorage() {
+	let state = JSON.parse(localStorage.getItem(localStorageKey));
+	video.currentTime = state.timer;
+	video.playbackRate = state.playbackRate;
+	console.info('Video state restored from local storage.');
+}
+
+function capture() {
+	const canvas = document.createElement('canvas');
+	canvas.width = canvas.height = 512;
+
+	const scale = Math.min(canvas.width / video.videoWidth, canvas.height / video.videoHeight);
+	const x = (canvas.width / 2) - (video.videoWidth / 2) * scale;
+	const y = (canvas.height / 2) - (video.videoHeight / 2) * scale;
+
+	const context = canvas.getContext('2d');
+	context.drawImage(video, x, y, video.videoWidth * scale, video.videoHeight * scale);
+
+	const dataURL = canvas.toDataURL();
+
+	return dataURL;
 }

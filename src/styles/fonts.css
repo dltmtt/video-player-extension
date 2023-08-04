@@ -1,18 +1,18 @@
 @font-face {
-	font-family: 'JetBrains Mono';
-	font-weight: 1 1000;
-	src: url(../fonts/JetBrains-Mono.woff2) format(woff2) tech(variations);
+  font-family: "JetBrains Mono";
+  font-weight: 1 1000;
+  src: url(../fonts/JetBrains-Mono.woff2) format(woff2) tech(variations);
 }
 
 @font-face {
-	font-family: 'Material Symbols';
-	font-weight: 1 1000;
-	src: url(../fonts/Material-Symbols.woff2) format(woff2) tech(variations);
+  font-family: "Material Symbols";
+  font-weight: 1 1000;
+  src: url(../fonts/Material-Symbols.woff2) format(woff2) tech(variations);
 }
 
 .material-icon {
-	display: inline-block;
+  display: inline-block;
 
-	font: 250 1.5rem / 1 'Material Symbols';
-	font-variation-settings: 'FILL' 0;
+  font: 250 1.5rem / 1 "Material Symbols";
+  font-variation-settings: "FILL" 0;
 }

@@ -7,168 +7,178 @@
 @import "colors.css" layer(colors);
 
 :root {
-    --hue: 225deg;
-    --saturation: 0%;
-    --lightness: 96%;
+  --hue: 225deg;
+  --saturation: 0%;
+  --lightness: 96%;
 
-    --duration: .35s;
+  --duration: 0.35s;
 
-    --gap: .5rem;
-}
-
-html,
-body,
-#drag-panel,
-#player {
-    height: 100%;
+  --gap: 0.5rem;
 }
 
 body {
-    font: 0.8375rem "JetBrains Mono", monospace;
+  block-size: 100vb;
+}
+
+#drag-panel,
+#player {
+  block-size: 100%;
+}
+
+body {
+  font: 0.8375rem "JetBrains Mono", monospace;
 }
 
 #drop-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 
 #drag-panel {
-    display: grid;
-    place-content: center;
-    place-items: center;
-    gap: var(--gap);
+  display: grid;
+  place-content: center;
+  place-items: center;
+  gap: var(--gap);
 
-    font-weight: bold;
-    font-size: 2.25rem;
-    color: var(--text2);
-    background-image: radial-gradient(circle at 100% 0, var(--surface1), var(--surface1) 50%, var(--surface3) 75%, var(--surface1) 75%);
+  font-weight: bold;
+  font-size: 2.25rem;
+  color: var(--text2);
+  background-image: radial-gradient(
+    circle at 100% 0,
+    var(--surface1),
+    var(--surface1) 50%,
+    var(--surface3) 75%,
+    var(--surface1) 75%
+  );
 
-    transition: box-shadow var(--duration);
-}
+  transition: box-shadow var(--duration);
 
-#drag-panel[data-file-hover] {
+  &[data-file-hover] {
     box-shadow: inset 0 0 0.75em 0.25em;
-}
+  }
 
-/* Visible when the window is shrunk */
-#drag-panel > * {
+  /* Visible when the window is shrunk */
+  > * {
     margin-inline: 1em;
     text-align: center;
+  }
 }
 
 #file-picker {
-    max-inline-size: 20em;
+  max-inline-size: 20em;
 
-    font-size: 0.5em;
-    padding: 0.5em;
-    border-radius: 0.5em;
+  font-size: 0.5em;
+  padding: 0.5em;
+  border-radius: 0.5em;
 
-    color: var(--text2);
-    background: var(--surface2);
-    box-shadow: 0 0 0.5em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
+  color: var(--text2);
+  background: var(--surface2);
+  box-shadow: 0 0 0.5em
+    hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
 
-    --spacing: .75em;
-    padding-block: calc(var(--spacing) * 0.618);
-    padding-inline: var(--spacing);
-    margin-inline-end: var(--spacing);
+  --spacing: 0.75em;
+  padding-block: calc(var(--spacing) * 0.618);
+  padding-inline: var(--spacing);
+  margin-inline-end: var(--spacing);
 
-    transition-duration: var(--duration);
-    transition-property: background-color, box-shadow;
-}
+  transition-duration: var(--duration);
+  transition-property: background-color, box-shadow;
 
-#file-picker:hover {
+  &:hover {
     background-color: var(--surface1);
-}
+  }
 
-#file-picker:active {
+  &:active {
     box-shadow: none;
+  }
 }
 
 #player {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    /* This can be seen when a file is hovering over a video */
-    background-image: radial-gradient(var(--surface4), var(--surface3));
+  /* This can be seen when a file is hovering over a video */
+  background-image: radial-gradient(var(--surface4), var(--surface3));
 }
 
 video {
-    flex: 1;
-    min-block-size: 0;
-    background-color: var(--surface2);
+  flex: 1;
+  min-block-size: 0;
+  background-color: var(--surface2);
 
-    transition-duration: var(--duration);
-    transition-property: scale, border-radius, border;
+  transition-duration: var(--duration);
+  transition-property: scale, border-radius, border;
 }
 
 #player[data-file-hover] video {
-    scale: 0.75;
-    border-radius: 1rem;
-    border: medium solid var(--surface4);
+  scale: 0.75;
+  border-radius: 1rem;
+  border: medium solid var(--surface4);
 }
 
 #controls {
-    --spacing: .75rem;
+  --spacing: 0.75rem;
 
-    position: relative;
+  position: relative;
 
-    display: flex;
-    align-items: center;
-    gap: var(--gap);
-    padding: var(--spacing);
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  padding: var(--spacing);
 
-    color: var(--text2);
-    background-color: var(--surface2);
-}
+  color: var(--text2);
+  background-color: var(--surface2);
 
-#controls > * {
-    height: 2.75rem;
-}
+  > * {
+    block-size: 2.75rem;
+  }
 
-#controls button {
+  button {
     transition: var(--duration);
-    transition-property: color, background-color, box-shadow, font-variation-settings;
-}
+    transition-property: color, background-color, box-shadow,
+      font-variation-settings;
 
-#controls button:is(:hover, :focus-visible) {
-    color: var(--text1);
-    background-color: var(--surface3);
-    box-shadow: 0 0 1px;
-}
+    &:is(:hover, :focus-visible) {
+      color: var(--text1);
+      background-color: var(--surface3);
+      box-shadow: 0 0 1px;
+    }
+  }
 
-#controls [id$="-btn"] {
+  &[id$="-btn"] {
     border-radius: 50%;
     aspect-ratio: 1;
-}
 
-#controls [id$="-btn"]:is(:hover, :focus-visible) {
-    font-variation-settings: "FILL" 1;
+    &:is(:hover, :focus-visible) {
+      font-variation-settings: "FILL" 1;
+    }
+  }
 }
 
 #video-bar {
-    --track-height: .375rem;
+  --track-height: 0.375rem;
 
-    position: absolute;
-    inset: 0;
-    translate: 0 -50%;
+  position: absolute;
+  inset: 0;
+  translate: 0 -50%;
 
-    appearance: none;
+  appearance: none;
 
-    block-size: var(--track-height);
+  block-size: var(--track-height);
 
-    color: var(--text2);
-    background: no-repeat left / var(--progress, 0%) linear-gradient(currentColor, currentColor) var(--surface3);
+  color: var(--text2);
+  background: no-repeat left / var(--progress, 0%)
+    linear-gradient(currentColor, currentColor) var(--surface3);
 
-    transition: var(--duration);
-    transition-property: block-size, height, filter;
-}
+  transition: var(--duration);
+  transition-property: block-size, height, filter;
 
-#video-bar:is(:hover, :focus-visible) {
-    --track-height: .5rem;
-}
+  &:is(:hover, :focus-visible) {
+    --track-height: 0.5rem;
+  }
 
-#video-bar::-webkit-slider-thumb {
+  &::-webkit-slider-thumb {
     appearance: none;
 
     --thumb-size: 1rem;
@@ -179,74 +189,77 @@ video {
     background-color: currentColor;
 
     transition: box-shadow var(--duration);
-}
 
-#video-bar::-webkit-slider-thumb:is(:hover, :focus-visible) {
-    margin: 0;
-    box-shadow: 0 0 0 0.5em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
+    &:is(:hover, :focus-visible) {
+      margin: 0;
+      box-shadow: 0 0 0 0.5em
+        hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
+    }
+  }
 }
 
 #time-indicator {
-    white-space: nowrap;
-    border-radius: 1.25rem;
-    padding-inline: var(--spacing);
+  white-space: nowrap;
+  border-radius: 1.25rem;
+  padding-inline: var(--spacing);
 }
 
 #duration::before {
-    content: " / ";
+  content: " / ";
 }
 
 #file-name-container {
-    display: inline-flex;
-    place-items: center;
+  display: inline-flex;
+  place-items: center;
 
-    min-inline-size: 6ch;
+  min-inline-size: 6ch;
 }
 
 #file-name {
-    max-inline-size: 66ch;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
+  max-inline-size: 66ch;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
-#file-name::before {
+  &::before {
     content: "•";
     margin-inline-end: calc(var(--spacing) + var(--gap));
+  }
 }
 
 #speed-controls {
-    /* Push to the right */
-    margin-inline-start: auto;
+  /* Push to the right */
+  margin-inline-start: auto;
 
-    text-align: center;
+  text-align: center;
 
-    border: thin solid var(--surface4);
-    border-radius: 1.25rem;
+  border: thin solid var(--surface4);
+  border-radius: 1.25rem;
 
-    --text-size: 5em;
-    --buttons-size: 1em;
-    inline-size: var(--text-size);
-    padding-inline: var(--spacing);
-    box-shadow: inset 0 0 0.25em hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
+  --text-size: 5em;
+  --buttons-size: 1em;
+  inline-size: var(--text-size);
+  padding-inline: var(--spacing);
+  box-shadow: inset 0 0 0.25em
+    hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
 
-    transition: var(--duration);
-    transition-property: inline-size, width;
-}
+  transition: var(--duration);
+  transition-property: inline-size, width;
 
-#speed-controls::-webkit-inner-spin-button {
+  &::-webkit-inner-spin-button {
     transition-duration: var(--duration);
     transition-property: margin, opacity;
 
     opacity: 0;
     margin-inline-start: calc(-1 * var(--buttons-size));
-}
+  }
 
-#speed-controls:is(:hover, :focus-visible) {
+  &:is(:hover, :focus-visible) {
     inline-size: calc(var(--text-size) + var(--buttons-size));
-}
 
-#speed-controls:is(:hover, :focus-visible)::-webkit-inner-spin-button {
-    opacity: 1;
-    margin: 0;
+    &::-webkit-inner-spin-button {
+      opacity: 1;
+      margin-inline-start: 0;
+    }
+  }
 }

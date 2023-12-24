@@ -1,25 +1,25 @@
 {
-	"manifest_version": 3,
-	"name": "Player for local videos",
-	"short_name": "Video player",
-	"description": "Player for local videos with light/dark theme, keyboard shortcuts, progress retrieval and more.",
-	"author": "Matteo Delton",
-	"version": "1.1",
-	"offline_enabled": true,
-	"background": {
-		"service_worker": "scripts/background.js"
-	},
-	"icons": {
-		"48": "icons/icon48.png",
-		"128": "icons/icon128.png",
-		"192": "icons/favicon.png"
-	},
-	"action": { },
-	"commands": {
-		"_execute_action": {
-			"suggested_key": {
-				"default": "Alt+Shift+O"
-			}
-		}
-	}
+  "manifest_version": 3,
+  "name": "Player for local videos",
+  "short_name": "Video player",
+  "description": "Player for local videos with light/dark theme, keyboard shortcuts, progress retrieval and more.",
+  "author": "Matteo Delton",
+  "version": "1.1",
+  "offline_enabled": true,
+  "background": {
+    "service_worker": "scripts/background.js"
+  },
+  "icons": {
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png",
+    "192": "icons/favicon.png"
+  },
+  "action": {},
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+O"
+      }
+    }
+  }
 }

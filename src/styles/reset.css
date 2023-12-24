@@ -22,35 +22,35 @@ button {
 input {
   font-family: inherit;
 
-  &[type="number"] {
+  [type="number"] {
     border: none;
     background: transparent;
     color: inherit;
     font-size: inherit;
     cursor: text;
 
-    &::-webkit-inner-spin-button {
+    ::-webkit-inner-spin-button {
       cursor: pointer;
     }
   }
 
-  &[type="range"] {
+  [type="range"] {
     font-size: inherit;
 
-    &::-webkit-slider-thumb-runnable-track {
+    ::-webkit-slider-thumb-runnable-track {
       cursor: pointer;
     }
 
-    &::-webkit-slider-thumb {
+    ::-webkit-slider-thumb {
       cursor: grab;
 
-      &:active {
+      :active {
         cursor: grabbing;
       }
     }
   }
 
-  &[type="file"]::file-selector-button {
+  [type="file"]::file-selector-button {
     border: none;
     border-radius: inherit;
     font-family: inherit;

@@ -4,7 +4,7 @@
   "short_name": "Video player",
   "description": "Player for local videos with light/dark theme, keyboard shortcuts, progress retrieval and more.",
   "author": "Matteo Delton",
-  "version": "1.1",
+  "version": "1.2",
   "offline_enabled": true,
   "background": {
     "service_worker": "scripts/background.js"

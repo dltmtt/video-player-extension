@@ -5,6 +5,17 @@ let preferences = {
   timeSkip: 10,
 };
 
+const supported_video_types = [
+  ".avi",
+  ".mp4",
+  ".mpeg",
+  ".ogv",
+  ".ts",
+  ".webm",
+  ".3gp",
+  ".3g2",
+];
+
 // VIDEO SELECTION
 // ---------------
 
@@ -18,7 +29,12 @@ let localStorageKey;
 
 droppableElements.forEach((droppable) => {
   droppable.addEventListener("dragenter", (e) => {
-    if (e.dataTransfer.items[0].type.startsWith("video/")) {
+    let type = e.dataTransfer.items[0].type;
+    let extension = type.substring(type.indexOf("/") + 1);
+    if (
+      type.startsWith("video/") &&
+      supported_video_types.includes("." + extension)
+    ) {
       droppable.dataset.fileHover = true;
       dropOverlay.hidden = false;
     }
@@ -63,16 +79,7 @@ filePicker.addEventListener("click", async () => {
         {
           description: "Videos",
           accept: {
-            "video/*": [
-              ".avi",
-              ".mp4",
-              ".mpeg",
-              ".ogv",
-              ".ts",
-              ".webm",
-              ".3gp",
-              ".3g2",
-            ],
+            "video/*": supported_video_types,
           },
         },
       ],

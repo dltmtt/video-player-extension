@@ -3,7 +3,10 @@
   "name": "Player for local videos",
   "short_name": "Video player",
   "description": "Player for local videos with light/dark theme, keyboard shortcuts, progress retrieval and more.",
-  "author": "Matteo Delton",
+  "author": {
+    "email": "deltonmatteo@gmail.com"
+  },
+  "homepage_url": "https://github.com/dltmtt/Video-player",
   "version": "1.2",
   "offline_enabled": true,
   "background": {

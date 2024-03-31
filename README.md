@@ -6,20 +6,16 @@
 
 This a video player for local videos whose main features are:
 
-* Light/dark theme (following system preferences)
-* Continue watching from where you left off[^1]
-* [Keyboard shortcuts](#keyboard-shortcuts)
-* Global Media Controls integration
-* Works offline
+- Light/dark theme (following system preferences)
+- Continue watching from where you left off[^1]
+- [Keyboard shortcuts](#keyboard-shortcuts)
+- Global Media Controls integration
+- Works offline
 
 [^1]: The video state is saved in the browser's local storage. If you clear your browser's data, the state will be lost. Saved state will be deleted upon video completion or for videos last played more than 30 days ago.
 
-<div id="screenshots" style="display: flex; flex-wrap: wrap;">
-    <img src="./images/welcome-light.png" alt="Welcome screen (light mode)" style="width: 50%;">
-    <img src="./images/player-light.png" alt="Player (light mode)" style="width: 50%;">
-    <img src="./images/welcome-dark.png" alt="Welcome screen (dark mode)" style="width: 50%;">
-    <img src="./images/player-dark.png" alt="Player screen (dark mode)" style="width: 50%;">
-</div>
+![Screenshot of the welcome screen](./images/welcome-light.png "Welcome screen")
+![Screenshot of the player](./images/player-light.png "Player")
 
 ## Background
 

@@ -100,6 +100,12 @@ body {
 
   /* This can be seen when a file is hovering over a video */
   background-image: radial-gradient(var(--surface4), var(--surface3));
+
+  &[data-file-hover] video {
+    scale: 0.75;
+    border-radius: 1rem;
+    border: medium solid var(--surface4);
+  }
 }
 
 video {
@@ -109,12 +115,6 @@ video {
 
   transition-duration: var(--duration);
   transition-property: scale, border-radius, border;
-}
-
-#player[data-file-hover] video {
-  scale: 0.75;
-  border-radius: 1rem;
-  border: medium solid var(--surface4);
 }
 
 #controls {
@@ -146,7 +146,7 @@ video {
     }
   }
 
-  &[id$="-btn"] {
+  [id$="-btn"] {
     border-radius: 50%;
     aspect-ratio: 1;
 

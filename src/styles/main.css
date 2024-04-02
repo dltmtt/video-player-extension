@@ -85,11 +85,11 @@ body {
   transition-duration: var(--duration);
   transition-property: background-color, box-shadow;
 
-  :hover {
+  &:hover {
     background-color: var(--surface1);
   }
 
-  :active {
+  &:active {
     box-shadow: none;
   }
 }
@@ -139,18 +139,18 @@ video {
     transition-property: color, background-color, box-shadow,
       font-variation-settings;
 
-    :is(:hover, :focus-visible) {
+    &:is(:hover, :focus-visible) {
       color: var(--text1);
       background-color: var(--surface3);
       box-shadow: 0 0 1px;
     }
   }
 
-  [id$="-btn"] {
+  &[id$="-btn"] {
     border-radius: 50%;
     aspect-ratio: 1;
 
-    :is(:hover, :focus-visible) {
+    &:is(:hover, :focus-visible) {
       font-variation-settings: "FILL" 1;
     }
   }
@@ -174,11 +174,11 @@ video {
   transition: var(--duration);
   transition-property: block-size, height, filter;
 
-  :is(:hover, :focus-visible) {
+  &:is(:hover, :focus-visible) {
     --track-height: 0.5rem;
   }
 
-  ::-webkit-slider-thumb {
+  &::-webkit-slider-thumb {
     appearance: none;
 
     --thumb-size: 1rem;
@@ -190,7 +190,7 @@ video {
 
     transition: box-shadow var(--duration);
 
-    :is(:hover, :focus-visible) {
+    &:is(:hover, :focus-visible) {
       margin: 0;
       box-shadow: 0 0 0 0.5em
         hsl(var(--surface-shadow) / calc(var(--shadow-strength) + 15%));
@@ -221,7 +221,7 @@ video {
   white-space: nowrap;
   text-overflow: ellipsis;
 
-  ::before {
+  &::before {
     content: "•";
     margin-inline-end: calc(var(--spacing) + var(--gap));
   }
@@ -246,7 +246,7 @@ video {
   transition: var(--duration);
   transition-property: inline-size, width;
 
-  ::-webkit-inner-spin-button {
+  &::-webkit-inner-spin-button {
     transition-duration: var(--duration);
     transition-property: margin, opacity;
 
@@ -254,10 +254,10 @@ video {
     margin-inline-start: calc(-1 * var(--buttons-size));
   }
 
-  :is(:hover, :focus-visible) {
+  &:is(:hover, :focus-visible) {
     inline-size: calc(var(--text-size) + var(--buttons-size));
 
-    ::-webkit-inner-spin-button {
+    &::-webkit-inner-spin-button {
       opacity: 1;
       margin-inline-start: 0;
     }

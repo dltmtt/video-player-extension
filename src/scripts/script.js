@@ -5,7 +5,7 @@ let preferences = {
   timeSkip: 10,
 };
 
-const supported_video_types = [
+const supportedVideoType = [
   ".avi",
   ".mp4",
   ".mpeg",
@@ -33,7 +33,7 @@ droppableElements.forEach((droppable) => {
     let extension = type.substring(type.indexOf("/") + 1);
     if (
       type.startsWith("video/") &&
-      supported_video_types.includes("." + extension)
+      supportedVideoType.includes("." + extension)
     ) {
       droppable.dataset.fileHover = true;
       dropOverlay.hidden = false;
@@ -75,7 +75,7 @@ filePicker.addEventListener("click", async () => {
         {
           description: "Videos",
           accept: {
-            "video/*": supported_video_types,
+            "video/*": supportedVideoType,
           },
         },
       ],

@@ -25,7 +25,7 @@ const dropOverlay = document.querySelector("#drop-overlay");
 const droppableElements = document.querySelectorAll(".droppable");
 const fileName = document.querySelector("#file-name");
 const video = document.querySelector("video");
-let localStorageKey;
+var localStorageKey;
 
 droppableElements.forEach((droppable) => {
   droppable.addEventListener("dragenter", (e) => {
@@ -49,12 +49,8 @@ dropOverlay.addEventListener("drop", async (e) => {
   // Type check is done in dragenter and in the click handler
   const fileHandle = await e.dataTransfer.items[0].getAsFileSystemHandle();
 
-  showLoadingScreen();
-
-  function showLoadingScreen() {
-    document.querySelector("span").textContent = "Loading…";
-    document.querySelector("#file-picker").hidden = true;
-  }
+  document.querySelector("span").textContent = "Loading…";
+  document.querySelector("#file-picker").hidden = true;
 
   manageFileHandle(fileHandle);
   handleDragEnd();
@@ -115,29 +111,23 @@ async function manageFileHandle(fileHandle) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: fileName.textContent,
       });
-
-      // If the fonts are not loaded in 100ms, show the player anyway
-      const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-      Promise.race([document.fonts.ready, wait(100)]).then(() => {
-        document.startViewTransition?.(showPlayer) ?? showPlayer();
-      });
-
-      function showPlayer() {
-        dragPanel.hidden = true;
-        player.hidden = false;
-      }
     },
-    { once: true }
+    { once: true },
   );
 
   // Bind the global media controls to the video
-  const actionHandlers = [
-    ["seekbackward", replay],
-    ["seekforward", forward],
-  ];
+  navigator.mediaSession.setActionHandler("seekbackward", replay);
+  navigator.mediaSession.setActionHandler("seekforward", forward);
 
-  for (const [action, handler] of actionHandlers) {
-    navigator.mediaSession.setActionHandler(action, handler);
+  // If the fonts are not loaded in 100ms, show the player anyway
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  Promise.race([document.fonts.ready, wait(100)]).then(() => {
+    document.startViewTransition?.(showPlayer) ?? showPlayer();
+  });
+
+  function showPlayer() {
+    dragPanel.hidden = true;
+    player.hidden = false;
   }
 }
 
@@ -242,7 +232,7 @@ function updateProgressBarVisually() {
 function updateIndicators() {
   currentTime.textContent = secondsToTime(video.currentTime);
   timeRemaining.textContent = `-${secondsToTime(
-    video.duration - video.currentTime
+    video.duration - video.currentTime,
   )}`;
 }
 
@@ -276,7 +266,7 @@ window.onbeforeunload = () => {
 
 // CLEANUP
 for (const key of Object.keys(localStorage)) {
-  const entryDate = new Date(JSON.parse(localStorage.getItem(key)).last_opened);
+  const entryDate = new Date(JSON.parse(localStorage.getItem(key)).lastOpened);
   if (entryDate < new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)) {
     localStorage.removeItem(key);
   }
@@ -372,7 +362,7 @@ function replay() {
 function forward() {
   video.currentTime = Math.min(
     video.currentTime + preferences.timeSkip,
-    video.duration
+    video.duration,
   );
 }
 
@@ -438,7 +428,7 @@ function updateLocalStorage() {
   let state = {
     timer: video.currentTime,
     playbackRate: video.playbackRate,
-    last_opened: Date.now(),
+    lastOpened: Date.now(),
   };
   localStorage.setItem(localStorageKey, JSON.stringify(state));
 }

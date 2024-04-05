@@ -46,11 +46,12 @@ dropOverlay.addEventListener("dragover", (e) => e.preventDefault());
 dropOverlay.addEventListener("drop", async (e) => {
   e.preventDefault();
 
+  if (!video.src) {
+    showLoadingScreen();
+  }
+
   // Type check is done in dragenter and in the click handler
   const fileHandle = await e.dataTransfer.items[0].getAsFileSystemHandle();
-
-  document.querySelector("span").textContent = "Loading…";
-  document.querySelector("#file-picker").hidden = true;
 
   manageFileHandle(fileHandle);
   handleDragEnd();
@@ -63,6 +64,11 @@ function handleDragEnd() {
   droppableElements.forEach((droppable) => {
     delete droppable.dataset.fileHover;
   });
+}
+
+function showLoadingScreen() {
+  document.querySelector("span").textContent = "Loading…";
+  document.querySelector("#file-picker").hidden = true;
 }
 
 // FILE INPUT
@@ -81,6 +87,8 @@ filePicker.addEventListener("click", async () => {
       ],
       multiple: false,
     });
+
+    showLoadingScreen();
 
     manageFileHandle(fileHandle);
   } catch (abortError) {}

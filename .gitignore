@@ -1,3 +1,8 @@
 .DS_Store
+.idea/
 *.code-workspace
 *.zip
+
+package-lock.json
+bun.lockb
+node_modules/

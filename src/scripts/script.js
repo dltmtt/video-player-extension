@@ -192,9 +192,8 @@ zoomBtn.onclick = toggleZoom;
 // ----
 
 const progressBar = document.querySelector("#video-bar");
+const timeIndicatorToggle = document.querySelector("#time-indicator-toggle");
 const timeIndicator = document.querySelector("#time-indicator");
-const currentTime = document.querySelector("#current-time");
-const timeRemaining = document.querySelector("#time-remaining");
 const replayBtn = document.querySelector("#replay-btn");
 const forwardBtn = document.querySelector("#forward-btn");
 const duration = document.querySelector("#duration");
@@ -206,7 +205,7 @@ video.addEventListener("loadedmetadata", () => {
 
   updateProgressBarValue();
   updateProgressBarVisually();
-  updateIndicators();
+  updateTimeIndicator();
   duration.textContent = secondsToTime(video.duration);
 });
 
@@ -217,7 +216,7 @@ video.addEventListener("timeupdate", () => {
 
   updateProgressBarValue();
   updateProgressBarVisually();
-  updateIndicators();
+  updateTimeIndicator();
 });
 
 // Seek to the point clicked on the progress bar
@@ -226,7 +225,7 @@ progressBar.addEventListener("input", () => {
 
   // Needed to show the time in real-time when the progress bar is dragged
   updateProgressBarVisually();
-  updateIndicators();
+  updateTimeIndicator();
 });
 
 function updateProgressBarValue() {
@@ -237,11 +236,14 @@ function updateProgressBarVisually() {
   progressBar.style.setProperty("--progress", `${progressBar.valueAsNumber}%`);
 }
 
-function updateIndicators() {
-  currentTime.textContent = secondsToTime(video.currentTime);
-  timeRemaining.textContent = `-${secondsToTime(
-    video.duration - video.currentTime,
-  )}`;
+function updateTimeIndicator() {
+  if (timeIndicator.dataset.state === "remaining") {
+    timeIndicator.textContent = secondsToTime(video.currentTime);
+  } else {
+    timeIndicator.textContent = `-${secondsToTime(
+      video.duration - video.currentTime,
+    )}`;
+  }
 }
 
 // progressBar also has tabindex="-1"
@@ -253,12 +255,7 @@ replayBtn.onclick = replay;
 forwardBtn.onclick = forward;
 
 // Toggle current time/remaining time
-timeIndicator.addEventListener("click", () => {
-  [timeRemaining.hidden, currentTime.hidden] = [
-    currentTime.hidden,
-    timeRemaining.hidden,
-  ];
-});
+timeIndicatorToggle.addEventListener("click", toggleTimeIndicator);
 
 video.addEventListener("emptied", () => {
   // Needed when another video is loaded while the current one is playing
@@ -397,10 +394,12 @@ function toggleZoom() {
 }
 
 function toggleTimeIndicator() {
-  [currentTime.hidden, timeRemaining.hidden] = [
-    timeRemaining.hidden,
-    currentTime.hidden,
-  ];
+  if (timeIndicator.dataset.state === "elapsed") {
+    timeIndicator.dataset.state = "remaining";
+  } else {
+    timeIndicator.dataset.state = "elapsed";
+  }
+  updateTimeIndicator();
 }
 
 // Convert seconds to time in format (h:)mm:ss
@@ -437,6 +436,7 @@ function updateLocalStorage() {
     timer: video.currentTime,
     playbackRate: video.playbackRate,
     lastOpened: Date.now(),
+    timeIndicator: timeIndicator.dataset.state,
   };
   localStorage.setItem(localStorageKey, JSON.stringify(state));
 }
@@ -445,4 +445,5 @@ function restoreFromLocalStorage() {
   let state = JSON.parse(localStorage.getItem(localStorageKey));
   video.currentTime = state.timer;
   video.playbackRate = state.playbackRate;
+  timeIndicator.dataset.state = state.timeIndicator;
 }

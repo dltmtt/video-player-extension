@@ -198,7 +198,7 @@ video {
   }
 }
 
-#time-indicator {
+#time-indicator-toggle {
   white-space: nowrap;
   border-radius: 1.25rem;
   padding-inline: var(--spacing);

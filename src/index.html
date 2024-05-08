@@ -61,10 +61,9 @@
       <button
         type="button"
         aria-label="Toggle time elapsed/remaining"
-        id="time-indicator"
+        id="time-indicator-toggle"
       >
-        <time role="timer" id="current-time">00:00</time>
-        <time role="timer" id="time-remaining" hidden></time>
+        <time role="timer" id="time-indicator" data-state="elapsed">00:00</time>
         <time role="timer" id="duration"></time>
       </button>
       <div aria-label="Video name" id="file-name-container">

@@ -1,5 +1,9 @@
 "use strict";
 
+// Safari doesn't support the File System Access API yet
+const supportsFileSystemAccessAPI =
+  "getAsFileSystemHandle" in DataTransferItem.prototype;
+
 let preferences = {
   speed: 1.8,
   timeSkip: 10,
@@ -51,7 +55,9 @@ dropOverlay.addEventListener("drop", async (e) => {
   }
 
   // Type check is done in dragenter and in the click handler
-  const fileHandle = await e.dataTransfer.items[0].getAsFileSystemHandle();
+  const fileHandle = supportsFileSystemAccessAPI
+    ? await e.dataTransfer.items[0].getAsFileSystemHandle()
+    : await e.dataTransfer.items[0].webkitGetAsEntry();
 
   manageFileHandle(fileHandle);
   handleDragEnd();
@@ -94,9 +100,17 @@ filePicker.addEventListener("click", async () => {
   } catch (abortError) {}
 });
 
+if (!supportsFileSystemAccessAPI) {
+  filePicker.hidden = true;
+}
+
 // FILE HANDLING
 async function manageFileHandle(fileHandle) {
-  const file = await fileHandle.getFile();
+  const file = supportsFileSystemAccessAPI
+    ? await fileHandle.getFile()
+    : await new Promise((resolve, reject) => {
+        fileHandle.file(resolve, reject);
+      });
 
   // Display the file name without the extension
   fileName.textContent = file.name.replace(/\.[^.]+$/, "");
@@ -237,7 +251,7 @@ function updateProgressBarVisually() {
 }
 
 function updateTimeIndicator() {
-  if (timeIndicator.dataset.state === "remaining") {
+  if (timeIndicator.dataset.state === "elapsed") {
     timeIndicator.textContent = secondsToTime(video.currentTime);
   } else {
     timeIndicator.textContent = `-${secondsToTime(

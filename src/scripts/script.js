@@ -398,7 +398,7 @@ function toggleFullScreen() {
 }
 
 function toggleZoom() {
-  if (zoomBtn.textContent === "zoom_out_map") {
+  if (zoomBtn.textContent.trim() === "zoom_out_map") {
     video.style.objectFit = "cover";
     zoomBtn.textContent = "crop_free";
   } else {

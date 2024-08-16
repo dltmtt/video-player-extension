@@ -27,21 +27,16 @@ const supportedVideoType = [
 const dragPanel = document.querySelector("#drag-panel");
 const dropOverlay = document.querySelector("#drop-overlay");
 const droppableElements = document.querySelectorAll(".droppable");
+const message = document.querySelector("#message");
 const fileName = document.querySelector("#file-name");
 const video = document.querySelector("video");
 var localStorageKey;
 
 droppableElements.forEach((droppable) => {
-  droppable.addEventListener("dragenter", (e) => {
-    let type = e.dataTransfer.items[0].type;
-    let extension = type.substring(type.indexOf("/") + 1);
-    if (
-      type.startsWith("video/") &&
-      supportedVideoType.includes("." + extension)
-    ) {
-      droppable.dataset.fileHover = true;
-      dropOverlay.hidden = false;
-    }
+  droppable.addEventListener("dragenter", () => {
+    // In Safari, e.dataTransfer.items is empty here, so we cannot do checks
+    droppable.dataset.fileHover = true;
+    dropOverlay.hidden = false;
   });
 });
 
@@ -50,11 +45,23 @@ dropOverlay.addEventListener("dragover", (e) => e.preventDefault());
 dropOverlay.addEventListener("drop", async (e) => {
   e.preventDefault();
 
+  let type = e.dataTransfer.items[0].type;
+  let extension = type.substring(type.indexOf("/") + 1);
+
+  if (
+    !type.startsWith("video/") ||
+    !supportedVideoType.includes("." + extension)
+  ) {
+    message.textContent = "Please drop a video file";
+    handleDragEnd();
+    return;
+  }
+
+  // A video has been dropped on the home screen (not on another video)
   if (!video.src) {
     showLoadingScreen();
   }
 
-  // Type check is done in dragenter and in the click handler
   const fileHandle = supportsFileSystemAccessAPI
     ? await e.dataTransfer.items[0].getAsFileSystemHandle()
     : await e.dataTransfer.items[0].webkitGetAsEntry();
@@ -72,14 +79,14 @@ function handleDragEnd() {
   });
 }
 
-function showLoadingScreen() {
-  document.querySelector("span").textContent = "Loading…";
-  document.querySelector("#file-picker").hidden = true;
-}
-
 // FILE INPUT
 const filePicker = document.querySelector("#file-picker");
-filePicker.addEventListener("click", async () => {
+
+if (!supportsFileSystemAccessAPI) {
+  filePicker.remove();
+}
+
+filePicker?.addEventListener("click", async () => {
   try {
     const [fileHandle] = await window.showOpenFilePicker({
       excludeAcceptAllOption: true,
@@ -100,11 +107,12 @@ filePicker.addEventListener("click", async () => {
   } catch (abortError) {}
 });
 
-if (!supportsFileSystemAccessAPI) {
-  filePicker.hidden = true;
+// FILE HANDLING
+function showLoadingScreen() {
+  message.textContent = "Loading…";
+  filePicker?.remove();
 }
 
-// FILE HANDLING
 async function manageFileHandle(fileHandle) {
   const file = supportsFileSystemAccessAPI
     ? await fileHandle.getFile()

@@ -10,6 +10,8 @@ This a video player for local videos whose main features are:
 - Global Media Controls integration
 - Works offline
 
+It can be installed as a [Chrome extension](https://chrome.google.com/webstore/detail/player-for-local-videos/jobmoeleihhccoboiljgojnjkejppiih) or as a [PWA](https://dltmtt.github.io/video-player/src).
+
 [^1]: The video state is saved in the browser's local storage. If you clear your browser's data, the state will be lost. Saved state will be deleted upon video completion or for videos last played more than 30 days before.
 
 ![Screenshot of the welcome screen](./images/welcome-light.png "Welcome screen")

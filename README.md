@@ -1,5 +1,7 @@
 # Player for local videos
 
+> ⚠️ This extension will be discontinued in favor of the [PWA](https://github.com/dltmtt/video-player), which offers more capabilities.
+
 [<img align="right" src="./images/chrome-web-store-badge.svg" alt="Available in the Chrome Web Store" width="260">](https://chrome.google.com/webstore/detail/player-for-local-videos/jobmoeleihhccoboiljgojnjkejppiih)
 
 This a video player for local videos whose main features are:
@@ -9,8 +11,6 @@ This a video player for local videos whose main features are:
 - [Keyboard shortcuts](#keyboard-shortcuts)
 - Global Media Controls integration
 - Works offline
-
-It can be installed as a [Chrome extension](https://chrome.google.com/webstore/detail/player-for-local-videos/jobmoeleihhccoboiljgojnjkejppiih) or as a [PWA](https://dltmtt.github.io/video-player/src).
 
 [^1]: The video state is saved in the browser's local storage. If you clear your browser's data, the state will be lost. Saved state will be deleted upon video completion or for videos last played more than 30 days before.
 
